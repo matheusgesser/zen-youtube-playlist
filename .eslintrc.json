@@ -1,0 +1,69 @@
+{
+    "extends": [
+        "next/core-web-vitals",
+        "next/typescript",
+        "airbnb",
+        "plugin:react-hooks/recommended",
+        "plugin:react/jsx-runtime"
+    ],
+    "rules": {
+        "semi": "error",
+        "indent": [
+            "error",
+            4
+        ],
+        "no-console": [
+            "warn"
+        ],
+        "no-unused-vars": [
+            "warn",
+            {
+                "ignoreRestSiblings": true
+            }
+        ],
+        "curly": [
+            "error",
+            "multi-or-nest"
+        ],
+        "object-curly-newline": [
+            "error",
+            {
+                "multiline": true,
+                "minProperties": 5
+            }
+        ],
+        "padded-blocks": [
+            "error",
+            {
+                "blocks": "never",
+                "classes": "never"
+            }
+        ],
+        "react/no-unused-state": "warn",
+        "react/jsx-indent": [
+            "error",
+            4
+        ],
+        "react/jsx-indent-props": [
+            "error",
+            4
+        ],
+        "spaced-comment": [
+            "error",
+            "always",
+            {
+                "markers": [
+                    "/"
+                ]
+            }
+        ],
+        "react/jsx-filename-extension": "off",
+        "eslint-plugin-import/extensions": "false",
+        "linebreak-style": "off",
+        "import/prefer-default-export": "off",
+        "jsx-quotes": [
+            "warn",
+            "prefer-double"
+        ]
+    }
+}

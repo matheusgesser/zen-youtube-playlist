@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    /* zinc-100 */
+    --background: #f4f4f5;
+    /* zinc-900 */
+    --foreground: #101010;
+
+}
+
+*::selection {
+    background-color: #10101020;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* zinc-900 */
+        --background: #101010;
+        /* zinc-100 */
+        --foreground: #f4f4f5;
+    }
+
+    *::selection {
+        background-color: #f4f4f520;
+    }
+}
+
+body {
+    color: var(--foreground);
+    background: var(--background);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}

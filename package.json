@@ -1,0 +1,33 @@
+{
+    "name": "better-youtube-playlist",
+    "version": "1.0.0",
+    "private": false,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint"
+    },
+    "dependencies": {
+        "@phosphor-icons/react": "^2.1.5-alpha.3",
+        "next": "14.2.15",
+        "next-intl": "^3.21.1",
+        "primereact": "^10.8.4",
+        "react": "^18",
+        "react-dom": "^18",
+        "server-only": "^0.0.1"
+    },
+    "devDependencies": {
+        "@types/node": "^20",
+        "@types/react": "^18",
+        "@types/react-dom": "^18",
+        "eslint": "^8",
+        "eslint-config-airbnb": "^19.0.4",
+        "eslint-config-airbnb-typescript": "^18.0.0",
+        "eslint-config-next": "14.2.15",
+        "eslint-plugin-react": "^7.37.1",
+        "postcss": "^8",
+        "tailwindcss": "^3.4.1",
+        "typescript": "^5"
+    }
+}
