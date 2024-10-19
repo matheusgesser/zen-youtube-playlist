@@ -7,7 +7,6 @@
     --background: #f4f4f5;
     /* zinc-900 */
     --foreground: #101010;
-
 }
 
 *::selection {
@@ -36,5 +35,15 @@ body {
 @layer utilities {
     .text-balance {
         text-wrap: balance;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
     }
 }

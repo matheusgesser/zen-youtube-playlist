@@ -1,16 +1,25 @@
-import { Header } from "@/components/Header";
+'use client'
+
 import PlaylistInput from "@/components/PlaylistInput";
+import { PlaylistList } from "@/components/PlaylistList";
+import { PlaylistStorage } from "@/lib/storage/PlaylistHelper";
+import { Playlist } from "@/types/Playlist";
+import { useState, useEffect } from 'react'
 
-export default async function Home() {
+export default function Home() {
+    const [playlists, setPlaylists] = useState<Playlist.Model[]>([])
+
+    useEffect(() => {
+        const playlists = Object.values(PlaylistStorage.getAll());
+
+        setPlaylists(playlists);
+    }, []);
+
     return (
-        <div className="min-h-screen p-4 pb-20 gap-16 sm:py-10 sm:px-20">
-            <main className="flex flex-col gap-8">
-                <Header />
+        <div className="w-full self-center min-h-64 max-w-[40rem] px-6 grid place-items-center gap-8">
+            <PlaylistInput />
 
-                <div className="min-h-64 grid place-items-center">
-                    <PlaylistInput />
-                </div>
-            </main>
+            {playlists.length > 0 && <PlaylistList playlists={playlists} />}
         </div>
     );
 }

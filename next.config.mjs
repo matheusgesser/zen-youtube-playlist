@@ -4,10 +4,11 @@ const withNextIntl = createNextIntlPlugin();
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    experimental: {
-        // Statically type links using next/link, improving type safety when navigating between pages
-        typedRoutes: true,
-    },
+    images: {
+        remotePatterns: [
+            { hostname: 'i.ytimg.com' },
+        ],
+    }
 };
 
 export default withNextIntl(nextConfig);

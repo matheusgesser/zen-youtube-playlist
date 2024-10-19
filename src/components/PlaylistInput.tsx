@@ -31,7 +31,7 @@ export default function PlaylistInput() {
     }
 
     return (
-        <div className='w-full max-w-[40rem] px-6 flex flex-col gap-2 sm:ml-[38px]'>
+        <div className='w-full flex flex-col gap-2'>
             <label htmlFor="playlist">Playlist ID or URL</label>
 
             <div className='w-full relative flex items-center gap-1'>
