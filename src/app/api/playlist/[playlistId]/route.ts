@@ -39,8 +39,9 @@ export async function GET(request: NextRequest, { params }: Params) {
             id: resourceId.videoId,
             title,
             originalPosition: position,
-            thumbnail: thumbnails.high.url,
+            thumbnail: thumbnails?.high?.url ?? thumbnails?.medium?.url ?? thumbnails?.default?.url,
         })),
+        nextPageToken: response.nextPageToken,
     }
 
     return Response.json({ data: formattedData });

@@ -7,6 +7,7 @@ import { type Playlist } from "@/types/Playlist";
 import { useEffect, useRef, useState } from "react";
 import { Spinner } from "@phosphor-icons/react";
 import { ScrollPanel } from 'primereact/scrollpanel';
+import { Button } from 'primereact/button';
 import { AudioPlayer } from "@/components/AudioPlayer";
 import { sleep } from "@/lib/sleep";
 import * as motion from "framer-motion/client"
@@ -26,6 +27,46 @@ export default function Playlist({ params: { playlistId } }: Props) {
 
     const toast = useRef<Toast>(null);
 
+    const loadRemainingVideos = async (pageToken: NonNullable<Playlist.Model['nextPageToken']>) => {
+        const fetchPageAndAppendVideos = async (pageToken: NonNullable<Playlist.Model['nextPageToken']>) => {
+            const response = await getPlaylist(playlistId, pageToken);
+
+            if (isServiceError(response)) {
+                toast.current!.show({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: `Error fetching playlist: ${response.message}`,
+                    life: 3000,
+                });
+
+                return;
+            }
+
+            PlaylistStorage.addVideos(response.data.id, response.data.videos);
+
+            if (response.data.nextPageToken) {
+                fetchPageAndAppendVideos(response.data.nextPageToken);
+
+                return;
+            }
+
+            toast.current!.clear();
+
+            const savedPlaylist = PlaylistStorage.get(playlistId);
+
+            setPlaylist(savedPlaylist);
+
+            toast.current!.show({
+                severity: 'success',
+                summary: 'Success!',
+                detail: `All ${response.data.totalVideos} videos were fetched and stored`,
+                life: 3000,
+            });
+        }
+
+        fetchPageAndAppendVideos(pageToken);
+    }
+
     useEffect(() => {
         const fetchPlaylist = async () => {
             const savedPlaylist = PlaylistStorage.get(playlistId);
@@ -44,8 +85,8 @@ export default function Playlist({ params: { playlistId } }: Props) {
             if (isServiceError(response)) {
                 toast.current!.show({
                     severity: 'error',
-                    summary: 'Error',
-                    detail: response.code === 404 ? 'Playlist not found' : 'Error fetching playlist',
+                    summary: 'Error!',
+                    detail: response.code === 404 ? 'Playlist not found' : `Error fetching playlist: ${response.message}`,
                     life: 3000,
                 });
 
@@ -55,6 +96,32 @@ export default function Playlist({ params: { playlistId } }: Props) {
             PlaylistStorage.add(response.data);
 
             setPlaylist(response.data);
+
+            if (response.data.totalVideos > 50 && response.data.nextPageToken)
+                toast.current!.show({
+                    severity: 'secondary',
+                    summary: 'Load more',
+                    detail: `Do you wanna load the remaining ${response.data.totalVideos - 50} items?`,
+                    sticky: true,
+                    pt: { content: { className: 'bg-neutral-950 rounded-lg' } },
+                    content: ({ message }) => (
+                        <div className="flex flex-col" style={{ flex: '1' }}>
+                            <div className="flex items-center gap-2">
+                                <span className="font-bold text-lg">{message.summary}</span>
+                            </div>
+
+                            <div className="font-medium my-3">
+                                {message.detail}
+                            </div>
+
+                            <Button
+                                label="Load"
+                                onClick={() => loadRemainingVideos(response.data.nextPageToken!)}
+                                className="h-8 w-16 border bg-neutral-50 text-black"
+                            />
+                        </div>
+                    )
+                });
         }
 
         fetchPlaylist();

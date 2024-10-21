@@ -29,7 +29,7 @@ const add = (playlist: Playlist.Model) => {
     const playlists = getAll();
 
     if (playlists[playlist.id] !== undefined)
-        throw new Error(`The playlist ${playlist.id} already exists`);
+        return;
 
     playlists[playlist.id] = playlist;
 
