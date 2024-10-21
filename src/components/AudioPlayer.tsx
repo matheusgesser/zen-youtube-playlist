@@ -1,9 +1,10 @@
 import { Playlist } from "@/types/Playlist"
-import { CSSProperties, useRef, useState } from "react";
-import { Pause, Play, SkipBack, SkipForward, Spinner } from "@phosphor-icons/react";
+import { CSSProperties, forwardRef, useRef, useState } from "react";
+import { ListBullets, Pause, Play, Shuffle, SkipBack, SkipForward, Spinner } from "@phosphor-icons/react";
 import ReactPlayer from "react-player";
 import { Slider, SliderChangeEvent } from 'primereact/slider';
 import { OnProgressProps } from "react-player/base";
+import * as motion from "framer-motion/client"
 
 type Props = {
     videoId: Playlist.Video['id'] | undefined,
@@ -11,9 +12,17 @@ type Props = {
     videoThumbnail: Playlist.Video['thumbnail'] | undefined,
     skipBack?: () => void,
     skipForward?: () => void,
+    toggleList: () => void,
 }
 
-export function AudioPlayer({ videoId, videoTitle, videoThumbnail, skipBack, skipForward }: Props) {
+export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
+    videoId,
+    videoTitle,
+    videoThumbnail,
+    skipBack,
+    skipForward,
+    toggleList,
+}: Props, ref) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
     const [progress, setProgress] = useState(0);
@@ -41,21 +50,20 @@ export function AudioPlayer({ videoId, videoTitle, videoThumbnail, skipBack, ski
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         backgroundSize: '180% 140%',
-        animation: `spin 30s linear infinite normal none ${isPaused ? 'paused' : 'running'}`,
+        animation: `spin 30s linear infinite normal none ${!isLoaded || isPaused ? 'paused' : 'running'}`,
         transition: 'transform 2s linear'
     }
 
     return (
-        <div className="flex flex-col gap-6 items-center">
+        <motion.div ref={ref} layout className="min-w-[28rem] flex flex-col gap-6 items-center">
             <ReactPlayer
                 playing={!isPaused}
                 url={`https://www.youtube.com/watch?v=${videoId}`}
-                fallback={<span>teste</span>}
                 ref={player}
                 controls={false}
                 volume={0.1}
-                onReady={e => setIsLoaded(true)}
-                onEnded={() => console.log('ended')}
+                onReady={() => setIsLoaded(true)}
+                onEnded={skipForward}
                 onProgress={updateProgress}
                 style={{ display: 'none', visibility: 'hidden' }}
             />
@@ -84,6 +92,10 @@ export function AudioPlayer({ videoId, videoTitle, videoThumbnail, skipBack, ski
                 />
 
                 <div className="flex gap-6 items-center">
+                    <button disabled title="Soon">
+                        <Shuffle size={20} color='#555' />
+                    </button>
+
                     <button disabled={!isLoaded || skipBack === undefined} onClick={skipBack}>
                         <SkipBack size={20} color={!isLoaded || skipBack === undefined ? '#555' : undefined} />
                     </button>
@@ -117,8 +129,12 @@ export function AudioPlayer({ videoId, videoTitle, videoThumbnail, skipBack, ski
                     <button disabled={!isLoaded || skipForward === undefined} onClick={skipForward}>
                         <SkipForward size={20} color={!isLoaded || skipForward === undefined ? '#555' : undefined} />
                     </button>
+
+                    <button disabled={!isLoaded} onClick={toggleList}>
+                        <ListBullets size={20} color={!isLoaded ? '#555' : undefined} />
+                    </button>
                 </div>
             </div>
-        </div>
+        </motion.div>
     )
-}
+});

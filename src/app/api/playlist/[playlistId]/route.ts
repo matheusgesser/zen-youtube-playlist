@@ -4,7 +4,7 @@ import { Playlist } from "@/types/Playlist";
 
 type Params = { params: { playlistId: string } };
 
-export const isError = (data: PlaylistItem.Response | PlaylistItem.Error): data is PlaylistItem.Error => (Object.keys(data).includes('error'));
+export const isError = (data: PlaylistItem.Response | PlaylistItem.Error): data is PlaylistItem.Error => ("error" in data);
 
 export async function GET(request: NextRequest, { params }: Params) {
     const { playlistId } = params;
@@ -23,7 +23,8 @@ export async function GET(request: NextRequest, { params }: Params) {
 
     const url = `https://www.googleapis.com/youtube/v3/playlistItems?${urlParams.toString()}`;
 
-    const response: PlaylistItem.Response | PlaylistItem.Error = await fetch(url).then(response => response.json());
+    const response: PlaylistItem.Response | PlaylistItem.Error = await fetch(url)
+        .then(response => response.json());
 
     if (isError(response)) {
         const { code, message } = response.error;
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest, { params }: Params) {
         videos: response.items.map(({ snippet: { resourceId, title, position, thumbnails } }) => ({
             id: resourceId.videoId,
             title,
-            position,
+            originalPosition: position,
             thumbnail: thumbnails.high.url,
         })),
     }

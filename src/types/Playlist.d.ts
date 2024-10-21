@@ -10,6 +10,6 @@ export namespace Playlist {
         id: string,
         title: string,
         thumbnail: string,
-        position: number,
+        originalPosition: number,
     }
 }
