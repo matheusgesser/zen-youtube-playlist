@@ -146,7 +146,6 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
                                 ? () => setCurrentVideoIndex(previousVideoIndex => previousVideoIndex as number - 1)
                                 : undefined}
                             toggleList={() => setIsListVisible(prevState => !prevState)}
-                            key={currentVideoIndex}
                         />
                     </motion.div>
 
