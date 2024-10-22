@@ -12,6 +12,7 @@ import { sleep } from '@/lib/sleep';
 import * as motion from 'framer-motion/client';
 import { AnimatePresence } from 'framer-motion';
 import type { Playlist } from '@/types/Playlist';
+import { fetchPageAndAppendVideos } from '@/lib/helpers/PlaylistHelper';
 
 type Props = { params: { playlistId: string } };
 
@@ -28,43 +29,31 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
         : null;
 
     const loadRemainingVideos = useCallback(async (pageToken: NonNullable<Playlist.Model['nextPageToken']>) => {
-        const fetchPageAndAppendVideos = async (pageToken: NonNullable<Playlist.Model['nextPageToken']>) => {
-            const response = await getPlaylist(playlistId, pageToken);
+        const response = await fetchPageAndAppendVideos(playlistId, pageToken);
 
-            if (isServiceError(response)) {
-                toast.current!.show({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: `Error fetching playlist: ${response.message}`,
-                    life: 3000,
-                });
-
-                return;
-            }
-
-            PlaylistStorage.addVideos(response.data.id, response.data.videos);
-
-            if (response.data.nextPageToken) {
-                fetchPageAndAppendVideos(response.data.nextPageToken);
-
-                return;
-            }
-
-            toast.current!.clear();
-
-            const savedPlaylist = PlaylistStorage.get(playlistId);
-
-            setPlaylist(savedPlaylist);
-
+        if (isServiceError(response)) {
             toast.current!.show({
-                severity: 'success',
-                summary: 'Success!',
-                detail: `All ${response.data.totalVideos} videos were fetched and stored`,
+                severity: 'error',
+                summary: 'Error',
+                detail: `Error ${response.code} fetching playlist: ${response.message}`,
                 life: 3000,
             });
-        };
 
-        fetchPageAndAppendVideos(pageToken);
+            return;
+        }
+
+        toast.current!.clear();
+
+        const savedPlaylist = PlaylistStorage.get(playlistId);
+
+        setPlaylist(savedPlaylist);
+
+        toast.current!.show({
+            severity: 'success',
+            summary: 'Success!',
+            detail: `All ${response.totalVideos} videos were fetched and stored`,
+            life: 3000,
+        });
     }, [playlistId]);
 
     useEffect(() => {
@@ -86,7 +75,9 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
                 toast.current!.show({
                     severity: 'error',
                     summary: 'Error!',
-                    detail: response.code === 404 ? 'Playlist not found' : `Error fetching playlist: ${response.message}`,
+                    detail: response.code === 404
+                        ? 'Playlist not found'
+                        : `Error ${response.code} fetching playlist: ${response.message}`,
                     life: 3000,
                 });
 

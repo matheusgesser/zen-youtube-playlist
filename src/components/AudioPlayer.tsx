@@ -1,5 +1,7 @@
 import { Playlist } from '@/types/Playlist';
-import { CSSProperties, forwardRef, useRef, useState } from 'react';
+import {
+    CSSProperties, forwardRef, useEffect, useRef, useState,
+} from 'react';
 import {
     ListBullets,
     Pause,
@@ -62,6 +64,11 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
         transition: 'transform 2s linear',
     };
 
+    useEffect(() => {
+        setIsLoaded(false);
+        setIsPaused(false);
+    }, [videoId]);
+
     return (
         <motion.div ref={ref} layout className="min-w-[28rem] flex flex-col gap-6 items-center">
             <ReactPlayer
@@ -81,67 +88,67 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                 : (
                     <>
                         <span className="max-w-[28rem] text-xl text-center">
-                {videoTitle}
-            </span>
+                            {videoTitle}
+                        </span>
 
                         <div className="relative size-[12rem] rounded-full bg-neutral-800 animation-pulse" style={thumbnailStyles} />
 
-            <div className="flex flex-col gap-4 items-center">
-                <Slider
-                    value={progress}
-                    onChange={handleSeekProgress}
-                    className="w-[16rem] bg-neutral-800 h-1.5"
-                    pt={{
-                        root: { className: 'rounded-xl' },
-                        range: { className: 'bg-white rounded-xl' },
-                        handle: { className: 'bg-white' },
-                    }}
-                />
+                        <div className="flex flex-col gap-4 items-center">
+                            <Slider
+                                value={progress}
+                                onChange={handleSeekProgress}
+                                className="w-[16rem] bg-neutral-800 h-1.5"
+                                pt={{
+                                    root: { className: 'rounded-xl' },
+                                    range: { className: 'bg-white rounded-xl' },
+                                    handle: { className: 'bg-white' },
+                                }}
+                            />
 
-                <div className="flex gap-6 items-center">
-                    <button type="button" disabled title="Soon">
-                        <Shuffle size={20} color="#555" />
-                    </button>
+                            <div className="flex gap-6 items-center">
+                                <button type="button" disabled title="Soon">
+                                    <Shuffle size={20} color="#555" />
+                                </button>
 
                                 <button type="button" disabled={skipBack === undefined} onClick={skipBack}>
                                     <SkipBack size={20} color={skipBack === undefined ? '#555' : undefined} />
-                    </button>
+                                </button>
 
-                    {isPaused ? (
-                        <button
-                            type="button"
-                            onClick={() => setIsPaused(false)}
+                                {isPaused ? (
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsPaused(false)}
                                         className="box-content p-2 rounded-full bg-white"
-                        >
-                            <Play
-                                size={28}
+                                    >
+                                        <Play
+                                            size={28}
                                             color="black"
-                                weight="fill"
-                            />
-                        </button>
-                    ) : (
-                        <button
-                            type="button"
-                            onClick={() => setIsPaused(true)}
+                                            weight="fill"
+                                        />
+                                    </button>
+                                ) : (
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsPaused(true)}
                                         className="box-content p-2 rounded-full bg-white"
-                        >
-                            <Pause
-                                size={28}
+                                    >
+                                        <Pause
+                                            size={28}
                                             color="black"
-                                weight="fill"
-                            />
-                        </button>
-                    )}
+                                            weight="fill"
+                                        />
+                                    </button>
+                                )}
 
                                 <button type="button" disabled={skipForward === undefined} onClick={skipForward}>
                                     <SkipForward size={20} color={skipForward === undefined ? '#555' : undefined} />
-                    </button>
+                                </button>
 
                                 <button type="button" onClick={toggleList}>
                                     <ListBullets size={20} />
-                    </button>
-                </div>
-            </div>
+                                </button>
+                            </div>
+                        </div>
                     </>
                 )}
         </motion.div>
