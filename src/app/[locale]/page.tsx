@@ -2,7 +2,7 @@
 
 import PlaylistInput from '@/components/PlaylistInput';
 import { PlaylistList } from '@/components/PlaylistList';
-import { PlaylistStorage } from '@/lib/storage/PlaylistHelper';
+import { PlaylistStorage } from '@/lib/storage/PlaylistStorage';
 import { Playlist } from '@/types/Playlist';
 import { useState, useEffect } from 'react';
 

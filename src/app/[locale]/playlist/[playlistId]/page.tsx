@@ -1,6 +1,6 @@
 'use client';
 
-import { PlaylistStorage } from '@/lib/storage/PlaylistHelper';
+import { PlaylistStorage } from '@/lib/storage/PlaylistStorage';
 import { Toast } from 'primereact/toast';
 import { getPlaylist, isServiceError } from '@/service/PlaylistService';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -17,15 +17,15 @@ type Props = { params: { playlistId: string } };
 
 export default function PlaylistPage({ params: { playlistId } }: Props) {
     const [playlist, setPlaylist] = useState<Playlist.Model | null>(null);
-    const [currentVideoIndex, setCurrentVideoIndex] = useState<number | null>(null);
+    const [currentVideoIndex, setCurrentVideoIndex] = useState<number | null>(0);
 
     const [isListVisible, setIsListVisible] = useState(true);
+
+    const toast = useRef<Toast>(null);
 
     const currentVideo = (currentVideoIndex !== null && playlist?.videos)
         ? playlist.videos[currentVideoIndex]
         : null;
-
-    const toast = useRef<Toast>(null);
 
     const loadRemainingVideos = useCallback(async (pageToken: NonNullable<Playlist.Model['nextPageToken']>) => {
         const fetchPageAndAppendVideos = async (pageToken: NonNullable<Playlist.Model['nextPageToken']>) => {
