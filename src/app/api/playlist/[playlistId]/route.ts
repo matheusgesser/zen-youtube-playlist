@@ -4,7 +4,7 @@ import { Playlist } from "@/types/Playlist";
 
 type Params = { params: { playlistId: string } };
 
-export const isError = (data: PlaylistItem.Response | PlaylistItem.Error): data is PlaylistItem.Error => ("error" in data);
+const isError = (data: PlaylistItem.Response | PlaylistItem.Error): data is PlaylistItem.Error => ("error" in data);
 
 export async function GET(request: NextRequest, { params }: Params) {
     const { playlistId } = params;
