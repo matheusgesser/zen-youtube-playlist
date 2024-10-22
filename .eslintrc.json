@@ -58,12 +58,34 @@
             }
         ],
         "react/jsx-filename-extension": "off",
-        "eslint-plugin-import/extensions": "false",
+        "eslint-plugin-import/extensions": 0,
+        "import/extensions": "off",
         "linebreak-style": "off",
         "import/prefer-default-export": "off",
+        "arrow-parens": "off",
+        "no-shadow": "off",
         "jsx-quotes": [
             "warn",
             "prefer-double"
-        ]
-    }
+        ],
+        "nonblock-statement-body-position": "off",
+        "no-promise-executor-return": "off",
+        "jsx-a11y/label-has-associated-control": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "react/require-default-props": "off",
+        "max-len": "off",
+        "react/no-unstable-nested-components": "off"
+    },
+    "overrides": [
+        {
+            "rules": {
+                "no-use-before-define": "off",
+                "no-unused-vars": "off",
+                "@typescript-eslint/no-unused-vars": "off"
+            },
+            "files": [
+                "*.d.ts"
+            ]
+        }
+    ]
 }

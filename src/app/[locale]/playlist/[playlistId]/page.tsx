@@ -1,21 +1,21 @@
-'use client'
+'use client';
 
-import { PlaylistStorage } from "@/lib/storage/PlaylistHelper";
-import { Toast } from 'primereact/toast'
-import { getPlaylist, isServiceError } from "@/service/PlaylistService";
-import { type Playlist } from "@/types/Playlist";
-import { useEffect, useRef, useState } from "react";
-import { Spinner } from "@phosphor-icons/react";
+import { PlaylistStorage } from '@/lib/storage/PlaylistHelper';
+import { Toast } from 'primereact/toast';
+import { getPlaylist, isServiceError } from '@/service/PlaylistService';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Spinner } from '@phosphor-icons/react';
 import { ScrollPanel } from 'primereact/scrollpanel';
 import { Button } from 'primereact/button';
-import { AudioPlayer } from "@/components/AudioPlayer";
-import { sleep } from "@/lib/sleep";
-import * as motion from "framer-motion/client"
-import { AnimatePresence } from "framer-motion";
+import { AudioPlayer } from '@/components/AudioPlayer';
+import { sleep } from '@/lib/sleep';
+import * as motion from 'framer-motion/client';
+import { AnimatePresence } from 'framer-motion';
+import type { Playlist } from '@/types/Playlist';
 
 type Props = { params: { playlistId: string } };
 
-export default function Playlist({ params: { playlistId } }: Props) {
+export default function PlaylistPage({ params: { playlistId } }: Props) {
     const [playlist, setPlaylist] = useState<Playlist.Model | null>(null);
     const [currentVideoIndex, setCurrentVideoIndex] = useState<number | null>(null);
 
@@ -27,7 +27,7 @@ export default function Playlist({ params: { playlistId } }: Props) {
 
     const toast = useRef<Toast>(null);
 
-    const loadRemainingVideos = async (pageToken: NonNullable<Playlist.Model['nextPageToken']>) => {
+    const loadRemainingVideos = useCallback(async (pageToken: NonNullable<Playlist.Model['nextPageToken']>) => {
         const fetchPageAndAppendVideos = async (pageToken: NonNullable<Playlist.Model['nextPageToken']>) => {
             const response = await getPlaylist(playlistId, pageToken);
 
@@ -62,10 +62,10 @@ export default function Playlist({ params: { playlistId } }: Props) {
                 detail: `All ${response.data.totalVideos} videos were fetched and stored`,
                 life: 3000,
             });
-        }
+        };
 
         fetchPageAndAppendVideos(pageToken);
-    }
+    }, [playlistId]);
 
     useEffect(() => {
         const fetchPlaylist = async () => {
@@ -97,7 +97,7 @@ export default function Playlist({ params: { playlistId } }: Props) {
 
             setPlaylist(response.data);
 
-            if (response.data.totalVideos > 50 && response.data.nextPageToken)
+            if (response.data.totalVideos > 50 && response.data.nextPageToken) {
                 toast.current!.show({
                     severity: 'secondary',
                     summary: 'Load more',
@@ -120,12 +120,13 @@ export default function Playlist({ params: { playlistId } }: Props) {
                                 className="h-8 w-16 border bg-neutral-50 text-black"
                             />
                         </div>
-                    )
+                    ),
                 });
-        }
+            }
+        };
 
         fetchPlaylist();
-    }, []);
+    }, [playlistId, loadRemainingVideos]);
 
     return (
         <div className="min-h-64 grid place-items-center">
@@ -162,9 +163,12 @@ export default function Playlist({ params: { playlistId } }: Props) {
                                     pt={{ content: { className: 'flex flex-col gap-2' } }}
                                 >
                                     {playlist?.videos.map((video, index) => (
-                                        <button onClick={() => setCurrentVideoIndex(index)} className="w-full flex gap-2 py-1.5">
+                                        <button type="button" onClick={() => setCurrentVideoIndex(index)} className="w-full flex gap-2 py-1.5">
                                             <div className="flex items-center gap-2 overflow-hidden">
-                                                <span className="text-neutral-400">{index + 1}.</span>
+                                                <span className="text-neutral-400">
+                                                    {index + 1}
+                                                    .
+                                                </span>
                                                 <span className="text-start whitespace-nowrap overflow-hidden text-ellipsis">{video.title}</span>
                                             </div>
                                         </button>
@@ -173,11 +177,10 @@ export default function Playlist({ params: { playlistId } }: Props) {
                             </motion.div>
                         ) : null}
                     </AnimatePresence>
-                </div >
-            )
-            }
+                </div>
+            )}
 
             <Toast ref={toast} />
-        </div >
+        </div>
     );
 }

@@ -1,4 +1,4 @@
-import { Playlist } from "@/types/Playlist";
+import { Playlist } from '@/types/Playlist';
 
 const getAll = () => {
     const playlists = window.localStorage.getItem('playlists');
@@ -54,4 +54,4 @@ export const PlaylistStorage = {
     get,
     add,
     addVideos,
-}
+};

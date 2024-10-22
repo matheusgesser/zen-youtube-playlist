@@ -1,9 +1,12 @@
-import { Playlist } from "@/types/Playlist";
-import { Service } from "@/types/Service";
+import { Playlist } from '@/types/Playlist';
+import { Service } from '@/types/Service';
 
-export const isServiceError = <T extends object>(response: T | Service.Error): response is Service.Error => "code" in response;
+export const isServiceError = <T extends object>(response: T | Service.Error): response is Service.Error => 'code' in response;
 
-export const getPlaylist = async (playlistId: string, pageToken?: string): Promise<{ data: Playlist.Model } | Service.Error> => {
+export const getPlaylist = async (
+    playlistId: string,
+    pageToken?: string,
+): Promise<{ data: Playlist.Model } | Service.Error> => {
     const params = new URLSearchParams({ pageToken: pageToken ?? '' });
 
     const route = `/api/playlist/${playlistId}?${params.toString()}`;
@@ -11,4 +14,4 @@ export const getPlaylist = async (playlistId: string, pageToken?: string): Promi
     const response = await fetch(route).then(response => response.json());
 
     return response;
-}
+};

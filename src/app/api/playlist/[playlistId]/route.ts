@@ -1,10 +1,10 @@
-import type { NextRequest } from "next/server";
-import { PlaylistItem } from "./PlaylistItemResponse";
-import { Playlist } from "@/types/Playlist";
+import type { NextRequest } from 'next/server';
+import { Playlist } from '@/types/Playlist';
+import { PlaylistItem } from './PlaylistItemResponse';
 
 type Params = { params: { playlistId: string } };
 
-const isError = (data: PlaylistItem.Response | PlaylistItem.Error): data is PlaylistItem.Error => ("error" in data);
+const isError = (data: PlaylistItem.Response | PlaylistItem.Error): data is PlaylistItem.Error => ('error' in data);
 
 export async function GET(request: NextRequest, { params }: Params) {
     const { playlistId } = params;
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest, { params }: Params) {
             thumbnail: thumbnails?.high?.url ?? thumbnails?.medium?.url ?? thumbnails?.default?.url,
         })),
         nextPageToken: response.nextPageToken,
-    }
+    };
 
     return Response.json({ data: formattedData });
 }
