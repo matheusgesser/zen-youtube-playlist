@@ -140,10 +140,10 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
                             videoTitle={currentVideo?.title}
                             videoThumbnail={currentVideo?.thumbnail}
                             skipBack={currentVideoIndex !== null && currentVideoIndex !== 0
-                                ? () => setCurrentVideoIndex(previousVideoIndex => previousVideoIndex as number + 1)
+                                ? () => setCurrentVideoIndex(previousVideoIndex => previousVideoIndex as number - 1)
                                 : undefined}
                             skipForward={currentVideoIndex !== null && playlist.videos !== null && (currentVideoIndex < (playlist.videos.length - 1))
-                                ? () => setCurrentVideoIndex(previousVideoIndex => previousVideoIndex as number - 1)
+                                ? () => setCurrentVideoIndex(previousVideoIndex => previousVideoIndex as number + 1)
                                 : undefined}
                             toggleList={() => setIsListVisible(prevState => !prevState)}
                         />
