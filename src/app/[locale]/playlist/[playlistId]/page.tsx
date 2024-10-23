@@ -4,7 +4,7 @@ import { PlaylistStorage } from '@/lib/storage/PlaylistStorage';
 import { Toast } from 'primereact/toast';
 import { getPlaylist, isServiceError } from '@/service/PlaylistService';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Spinner } from '@phosphor-icons/react';
+import { Play, Spinner } from '@phosphor-icons/react';
 import { ScrollPanel } from 'primereact/scrollpanel';
 import { Button } from 'primereact/button';
 import { AudioPlayer } from '@/components/AudioPlayer';
@@ -181,11 +181,14 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
                                     pt={{ content: { className: 'flex flex-col gap-2' } }}
                                 >
                                     {playlist?.videos.map((video, index) => (
-                                        <button type="button" onClick={() => setCurrentVideoIndex(index)} className="w-full flex gap-2 py-1.5">
+                                        <button type="button" onClick={() => setCurrentVideoIndex(index)} className={`w-full flex gap-2 px-2 py-1.5 rounded-lg ${index === currentVideoIndex && 'bg-neutral-800'}`}>
                                             <div className="flex items-center gap-2 overflow-hidden">
                                                 <span className="text-neutral-400">
-                                                    {index + 1}
-                                                    .
+                                                    {index === currentVideoIndex ? (
+                                                        <Play size={16} color="white" weight="fill" className="ml-0.5 mr-1" />
+                                                    ) : (
+                                                        `${index + 1}.`
+                                                    )}
                                                 </span>
                                                 <span className="text-start whitespace-nowrap overflow-hidden text-ellipsis">{video.title}</span>
                                             </div>
