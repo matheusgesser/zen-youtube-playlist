@@ -33,8 +33,16 @@ body {
 }
 
 @layer utilities {
-    .text-balance {
-        text-wrap: balance;
+    .byp-transition {
+        transition: all 200ms;
+    }
+
+    .byp-focus {
+        @apply focus-visible:outline-none focus-visible:rounded-full focus-visible:ring-8 focus-visible:ring-[#FFFFFF20];
+    }
+
+    .byp-focus-bg {
+        @apply focus-visible:bg-[#FFFFFF20];
     }
 }
 
