@@ -14,6 +14,7 @@ import ReactPlayer from 'react-player';
 import { Slider, SliderChangeEvent } from 'primereact/slider';
 import { OnProgressProps } from 'react-player/base';
 import * as motion from 'framer-motion/client';
+import { useWindowDimensions } from '@/lib/hooks/useWindowDimensions';
 import { AudioPlayerSkeleton } from './AudioPlayerSkeleton';
 
 type Props = {
@@ -23,6 +24,8 @@ type Props = {
     skipBack?: () => void,
     skipForward?: () => void,
     toggleList: () => void,
+    isShuffleActive: boolean,
+    toggleShuffle: () => void,
 }
 
 export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
@@ -32,12 +35,17 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
     skipBack,
     skipForward,
     toggleList,
+    isShuffleActive,
+    toggleShuffle,
 }: Props, ref) => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
     const [progress, setProgress] = useState(0);
 
     const player = useRef<ReactPlayer>(null);
+
+    const { width } = useWindowDimensions();
+    const isMobile = width < 1280;
 
     const updateProgress = ({ playedSeconds }: OnProgressProps) => {
         const totalSeconds = player.current!.getDuration();
@@ -48,6 +56,10 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
     };
 
     const handleSeekProgress = ({ value }: SliderChangeEvent) => {
+        // Prevents skipping on sliding to end
+        if (value === 100)
+            return;
+
         const sliderValue = value as number;
 
         player.current!.seekTo(sliderValue / 100, 'fraction');
@@ -101,16 +113,16 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                                 pt={{
                                     root: { className: 'rounded-xl' },
                                     range: { className: 'bg-white rounded-xl' },
-                                    handle: { className: 'bg-white' },
+                                    handle: { className: 'bg-white hover:scale-105 active:scale-105 focus:scale-105 byp-focus' },
                                 }}
                             />
 
                             <div className="flex gap-6 items-center">
-                                <button type="button" disabled title="Soon">
-                                    <Shuffle size={20} color="#555" />
+                                <button type="button" onClick={toggleShuffle} className={`p-1.5 rounded-full byp-focus byp-focus-bg ${isShuffleActive && 'bg-neutral-800'}`}>
+                                    <Shuffle size={20} className="mr-[1px] mb-[1px]" />
                                 </button>
 
-                                <button type="button" disabled={skipBack === undefined} onClick={skipBack}>
+                                <button type="button" disabled={skipBack === undefined} onClick={skipBack} className="byp-focus byp-focus-bg">
                                     <SkipBack size={20} color={skipBack === undefined ? '#555' : undefined} />
                                 </button>
 
@@ -118,7 +130,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                                     <button
                                         type="button"
                                         onClick={() => setIsPaused(false)}
-                                        className="box-content p-2 rounded-full bg-white"
+                                        className="box-content p-2 rounded-full bg-white byp-focus"
                                     >
                                         <Play
                                             size={28}
@@ -130,7 +142,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                                     <button
                                         type="button"
                                         onClick={() => setIsPaused(true)}
-                                        className="box-content p-2 rounded-full bg-white"
+                                        className="box-content p-2 rounded-full bg-white byp-focus"
                                     >
                                         <Pause
                                             size={28}
@@ -140,12 +152,12 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                                     </button>
                                 )}
 
-                                <button type="button" disabled={skipForward === undefined} onClick={skipForward}>
+                                <button type="button" disabled={skipForward === undefined} onClick={skipForward} className="byp-focus byp-focus-bg">
                                     <SkipForward size={20} color={skipForward === undefined ? '#555' : undefined} />
                                 </button>
 
-                                <button type="button" onClick={toggleList}>
-                                    <ListBullets size={20} />
+                                <button type="button" disabled={isMobile} onClick={toggleList} className="p-1.5 rounded-full byp-focus byp-focus-bg">
+                                    <ListBullets size={20} color={isMobile ? '#555' : undefined} />
                                 </button>
                             </div>
                         </div>

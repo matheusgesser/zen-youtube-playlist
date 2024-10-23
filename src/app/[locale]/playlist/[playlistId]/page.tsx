@@ -16,10 +16,20 @@ import { fetchPageAndAppendVideos } from '@/lib/helpers/PlaylistHelper';
 
 type Props = { params: { playlistId: string } };
 
+const getRandomVideoIndex = (currentIndex: number, totalVideos: number) => {
+    const randomIndex = Math.round(Math.random() * totalVideos);
+
+    if (randomIndex === currentIndex)
+        return getRandomVideoIndex(currentIndex, totalVideos);
+
+    return randomIndex;
+};
+
 export default function PlaylistPage({ params: { playlistId } }: Props) {
     const [playlist, setPlaylist] = useState<Playlist.Model | null>(null);
     const [currentVideoIndex, setCurrentVideoIndex] = useState<number | null>(0);
 
+    const [isShuffleActive, setIsShuffleActive] = useState(false);
     const [isListVisible, setIsListVisible] = useState(true);
 
     const toast = useRef<Toast>(null);
@@ -55,6 +65,22 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
             life: 3000,
         });
     }, [playlistId]);
+
+    const previousSong = () => {
+        setCurrentVideoIndex(previousVideoIndex => previousVideoIndex as number - 1);
+    };
+
+    const nextSong = () => {
+        if (isShuffleActive) {
+            const randomIndex = getRandomVideoIndex(currentVideoIndex!, playlist?.videos.length ?? 0);
+
+            setCurrentVideoIndex(randomIndex);
+
+            return;
+        }
+
+        setCurrentVideoIndex(previousVideoIndex => previousVideoIndex as number + 1);
+    };
 
     useEffect(() => {
         const fetchPlaylist = async () => {
@@ -124,19 +150,21 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
             {playlist === null ? (
                 <Spinner size={32} className="animate-spin" />
             ) : (
-                <div className="w-full min-h-[600px] flex flex-col gap-16 lg:flex-row justify-evenly items-center">
+                <div className="w-full min-h-[600px] flex flex-col gap-16 xl:flex-row justify-evenly items-center">
                     <motion.div initial={false} id="audio-player">
                         <AudioPlayer
                             videoId={currentVideo?.id}
                             videoTitle={currentVideo?.title}
                             videoThumbnail={currentVideo?.thumbnail}
-                            skipBack={currentVideoIndex !== null && currentVideoIndex !== 0
-                                ? () => setCurrentVideoIndex(previousVideoIndex => previousVideoIndex as number - 1)
+                            skipBack={currentVideoIndex !== null && currentVideoIndex !== 0 && !isShuffleActive
+                                ? previousSong
                                 : undefined}
                             skipForward={currentVideoIndex !== null && playlist.videos !== null && (currentVideoIndex < (playlist.videos.length - 1))
-                                ? () => setCurrentVideoIndex(previousVideoIndex => previousVideoIndex as number + 1)
+                                ? nextSong
                                 : undefined}
                             toggleList={() => setIsListVisible(prevState => !prevState)}
+                            isShuffleActive={isShuffleActive}
+                            toggleShuffle={() => setIsShuffleActive(prevState => !prevState)}
                         />
                     </motion.div>
 
