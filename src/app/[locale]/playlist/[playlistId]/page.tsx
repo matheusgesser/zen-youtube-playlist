@@ -176,8 +176,8 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
                                 exit={{ opacity: 0 }}
                             >
                                 <ScrollPanel
-                                    style={{ width: '500px', height: '600px' }}
-                                    className="px-4"
+                                    style={{ width: '500px', height: '500px' }}
+                                    className="px-4 my-8"
                                     pt={{ content: { className: 'flex flex-col gap-2' } }}
                                 >
                                     {playlist?.videos.map((video, index) => (
@@ -185,7 +185,7 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
                                             <div className="flex items-center gap-2 overflow-hidden">
                                                 <span className="text-neutral-400">
                                                     {index === currentVideoIndex ? (
-                                                        <Play size={16} color="white" weight="fill" className="ml-0.5 mr-1" />
+                                                        <Play size={16} color="white" weight="fill" className={currentVideoIndex > 8 ? 'ml-0.5 mr-1' : 'mr-[-0.18rem]'} />
                                                     ) : (
                                                         `${index + 1}.`
                                                     )}
