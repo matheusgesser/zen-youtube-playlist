@@ -17,6 +17,11 @@ export function AudioPlayerSkeleton() {
                 <Skeleton shape="circle" size="1.5rem" />
                 <Skeleton width="1rem" />
             </div>
+
+            <div className="flex gap-2 items-center">
+                <Skeleton shape="circle" size="1.25rem" />
+                <Skeleton width="8rem" height="0.6rem" />
+            </div>
         </>
     );
 }

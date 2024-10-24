@@ -9,6 +9,9 @@ import {
     Shuffle,
     SkipBack,
     SkipForward,
+    SpeakerHigh,
+    SpeakerLow,
+    SpeakerSlash,
 } from '@phosphor-icons/react';
 import ReactPlayer from 'react-player';
 import { Slider, SliderChangeEvent } from 'primereact/slider';
@@ -28,6 +31,17 @@ type Props = {
     toggleShuffle: () => void,
 }
 
+/** @factory */
+const makeVolumeIcon = (volume: number, isMuted: boolean) => {
+    if (isMuted || volume === 0)
+        return <SpeakerSlash size={24} />;
+
+    if (volume < 50)
+        return <SpeakerLow size={24} />;
+
+    return <SpeakerHigh size={24} />;
+};
+
 export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
     videoId,
     videoTitle,
@@ -41,6 +55,9 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
     const [isLoaded, setIsLoaded] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
     const [progress, setProgress] = useState(0);
+
+    const [volume, setVolume] = useState(50);
+    const [isMuted, setIsMuted] = useState(false);
 
     const player = useRef<ReactPlayer>(null);
 
@@ -67,6 +84,8 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
         setProgress(sliderValue);
     };
 
+    const toggleMuted = () => setIsMuted(prevState => !prevState);
+
     const thumbnailStyles: CSSProperties = {
         backgroundImage: `url(${videoThumbnail})`,
         backgroundPosition: 'center',
@@ -88,7 +107,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                 url={`https://www.youtube.com/watch?v=${videoId}`}
                 ref={player}
                 controls={false}
-                volume={0.1}
+                volume={isMuted ? 0 : (volume / 100)}
                 onReady={() => setIsLoaded(true)}
                 onEnded={skipForward}
                 onProgress={updateProgress}
@@ -105,14 +124,14 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
 
                         <div className="relative size-[12rem] rounded-full bg-neutral-800 animation-pulse" style={thumbnailStyles} />
 
-                        <div className="flex flex-col gap-4 items-center">
+                        <div className="flex flex-col gap-6 items-center">
                             <Slider
                                 value={progress}
                                 onChange={handleSeekProgress}
                                 className="w-[16rem] bg-neutral-800 h-1.5"
                                 pt={{
-                                    root: { className: 'rounded-xl' },
-                                    range: { className: 'bg-white rounded-xl' },
+                                    root: { className: 'cursor-pointer rounded-xl' },
+                                    range: { className: 'cursor-pointer bg-white rounded-xl' },
                                     handle: { className: 'bg-white hover:scale-105 active:scale-105 focus:scale-105 byp-focus' },
                                 }}
                             />
@@ -159,6 +178,23 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                                 <button type="button" disabled={isMobile} onClick={toggleList} className="p-1.5 rounded-full byp-focus byp-focus-bg">
                                     <ListBullets size={20} color={isMobile ? '#555' : undefined} />
                                 </button>
+                            </div>
+
+                            <div className="flex gap-4 items-center">
+                                <button type="button" onClick={toggleMuted} className="byp-focus byp-focus-bg">
+                                    {makeVolumeIcon(volume, isMuted)}
+                                </button>
+
+                                <Slider
+                                    value={volume}
+                                    onChange={(e) => setVolume(e.value as number)}
+                                    className="w-[8rem] bg-neutral-800 h-1.5 my-2"
+                                    pt={{
+                                        root: { className: 'cursor-pointer rounded-xl' },
+                                        range: { className: 'cursor-pointer bg-white rounded-xl' },
+                                        handle: { className: 'bg-white hover:scale-105 active:scale-105 focus:scale-105 byp-focus' },
+                                    }}
+                                />
                             </div>
                         </div>
                     </>
