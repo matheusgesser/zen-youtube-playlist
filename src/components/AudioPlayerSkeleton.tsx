@@ -3,8 +3,10 @@ import { Skeleton } from 'primereact/skeleton';
 export function AudioPlayerSkeleton() {
     return (
         <>
-            <Skeleton width="22rem" className="-mb-2" />
-            <Skeleton width="24rem" />
+            <div className="max-w-[28rem] min-h-24 grid place-items-center">
+                <Skeleton width="22rem" className="-mb-[2.5rem]" />
+                <Skeleton width="24rem" />
+            </div>
 
             <Skeleton shape="circle" size="12rem" />
 

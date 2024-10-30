@@ -61,6 +61,8 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
 
     const player = useRef<ReactPlayer>(null);
 
+    const isFirstRender = useRef(false);
+
     const { width } = useWindowDimensions();
     const isMobile = width < 1280;
 
@@ -108,7 +110,17 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                 ref={player}
                 controls={false}
                 volume={isMuted ? 0 : (volume / 100)}
-                onReady={() => setIsLoaded(true)}
+                onReady={() => {
+                    setIsLoaded(true);
+
+                    if (!isFirstRender)
+                        return;
+
+                    // We need this approach to prevent paused player on first render
+                    setIsPaused(false);
+
+                    isFirstRender.current = false;
+                }}
                 onEnded={skipForward}
                 onProgress={updateProgress}
                 style={{ display: 'none', visibility: 'hidden' }}
@@ -118,9 +130,11 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                 ? <AudioPlayerSkeleton />
                 : (
                     <>
-                        <span className="max-w-[28rem] text-xl text-center">
-                            {videoTitle}
-                        </span>
+                        <div className="max-w-[28rem] min-h-24 grid place-items-center">
+                            <span className="text-xl text-center line-clamp-3">
+                                {videoTitle}
+                            </span>
+                        </div>
 
                         <div className="relative size-[12rem] rounded-full bg-neutral-800 animation-pulse" style={thumbnailStyles} />
 

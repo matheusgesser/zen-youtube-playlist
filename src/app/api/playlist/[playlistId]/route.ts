@@ -32,15 +32,19 @@ export async function GET(request: NextRequest, { params }: Params) {
         return Response.json({ code, message });
     }
 
+    // Exclude private videos
+    const filteredVideos = response.items.filter(({ snippet: { title } }) => title !== 'Private video');
+
     const formattedData: Playlist.Model = {
         id: playlistId,
         totalVideos: response.pageInfo.totalResults,
-        videos: response.items.map(({ snippet: { resourceId, title, position, thumbnails } }) => ({
+        videos: filteredVideos.map(({ snippet: { resourceId, title, position, thumbnails } }) => ({
             id: resourceId.videoId,
             title,
             originalPosition: position,
             thumbnail: thumbnails?.high?.url ?? thumbnails?.medium?.url ?? thumbnails?.default?.url,
         })),
+        shuffledOrder: [],
         nextPageToken: response.nextPageToken,
     };
 

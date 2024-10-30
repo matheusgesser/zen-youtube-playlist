@@ -12,27 +12,31 @@ import { sleep } from '@/lib/sleep';
 import * as motion from 'framer-motion/client';
 import { AnimatePresence } from 'framer-motion';
 import type { Playlist } from '@/types/Playlist';
-import { fetchPageAndAppendVideos } from '@/lib/helpers/PlaylistHelper';
+import { fetchPageAndAppendVideos, makeShuffledOrder } from '@/lib/helpers/PlaylistHelper';
+import { usePlaylistOrder } from '@/lib/hooks/usePlaylistOrder';
+import { VideosList } from '@/components/VideosList';
 
 type Props = { params: { playlistId: string } };
-
-const getRandomVideoIndex = (currentIndex: number, totalVideos: number) => {
-    const randomIndex = Math.round(Math.random() * totalVideos);
-
-    if (randomIndex === currentIndex)
-        return getRandomVideoIndex(currentIndex, totalVideos);
-
-    return randomIndex;
-};
 
 export default function PlaylistPage({ params: { playlistId } }: Props) {
     const [playlist, setPlaylist] = useState<Playlist.Model | null>(null);
     const [currentVideoIndex, setCurrentVideoIndex] = useState<number | null>(0);
 
-    const [isShuffleActive, setIsShuffleActive] = useState(false);
     const [isListVisible, setIsListVisible] = useState(true);
 
     const toast = useRef<Toast>(null);
+
+    const {
+        isShuffleActive,
+        setIsShuffleActive,
+        nextSong,
+        previousSong,
+    } = usePlaylistOrder({
+        playlistId,
+        totalVideos: playlist?.videos.length,
+        currentVideoIndex,
+        setCurrentVideoIndex,
+    });
 
     const currentVideo = (currentVideoIndex !== null && playlist?.videos)
         ? playlist.videos[currentVideoIndex]
@@ -66,22 +70,6 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
         });
     }, [playlistId]);
 
-    const previousSong = () => {
-        setCurrentVideoIndex(previousVideoIndex => previousVideoIndex as number - 1);
-    };
-
-    const nextSong = () => {
-        if (isShuffleActive) {
-            const randomIndex = getRandomVideoIndex(currentVideoIndex!, playlist?.videos.length ?? 0);
-
-            setCurrentVideoIndex(randomIndex);
-
-            return;
-        }
-
-        setCurrentVideoIndex(previousVideoIndex => previousVideoIndex as number + 1);
-    };
-
     useEffect(() => {
         const fetchPlaylist = async () => {
             const savedPlaylist = PlaylistStorage.get(playlistId);
@@ -91,6 +79,10 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
                 await sleep(1000);
 
                 setPlaylist(savedPlaylist);
+
+                // Updates playlist shuffle order to ensure randomization
+                const shuffledOrder = makeShuffledOrder(savedPlaylist.videos.length);
+                PlaylistStorage.setShuffledOrder(playlistId, shuffledOrder);
 
                 return;
             }
@@ -156,48 +148,20 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
                             videoId={currentVideo?.id}
                             videoTitle={currentVideo?.title}
                             videoThumbnail={currentVideo?.thumbnail}
-                            skipBack={currentVideoIndex !== null && currentVideoIndex !== 0 && !isShuffleActive
-                                ? previousSong
-                                : undefined}
-                            skipForward={currentVideoIndex !== null && playlist.videos !== null && (currentVideoIndex < (playlist.videos.length - 1))
-                                ? nextSong
-                                : undefined}
+                            skipBack={previousSong}
+                            skipForward={nextSong}
                             toggleList={() => setIsListVisible(prevState => !prevState)}
                             isShuffleActive={isShuffleActive}
                             toggleShuffle={() => setIsShuffleActive(prevState => !prevState)}
                         />
                     </motion.div>
 
-                    <AnimatePresence mode="popLayout">
-                        {isListVisible ? (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                            >
-                                <ScrollPanel
-                                    style={{ width: '500px', height: '500px' }}
-                                    className="px-4 my-8"
-                                    pt={{ content: { className: 'flex flex-col gap-2' } }}
-                                >
-                                    {playlist?.videos.map((video, index) => (
-                                        <button type="button" onClick={() => setCurrentVideoIndex(index)} className={`w-full flex gap-2 px-2 py-1.5 rounded-lg ${index === currentVideoIndex && 'bg-neutral-800'}`}>
-                                            <div className="flex items-center gap-2 overflow-hidden">
-                                                <span className="text-neutral-400">
-                                                    {index === currentVideoIndex ? (
-                                                        <Play size={16} color="white" weight="fill" className={currentVideoIndex > 8 ? 'ml-0.5 mr-1' : 'mr-[-0.18rem]'} />
-                                                    ) : (
-                                                        `${index + 1}.`
-                                                    )}
-                                                </span>
-                                                <span className="text-start whitespace-nowrap overflow-hidden text-ellipsis">{video.title}</span>
-                                            </div>
-                                        </button>
-                                    ))}
-                                </ScrollPanel>
-                            </motion.div>
-                        ) : null}
-                    </AnimatePresence>
+                    <VideosList
+                        isVisible={isListVisible}
+                        playlistVideos={playlist.videos}
+                        currentVideoIndex={currentVideoIndex}
+                        setCurrentVideoIndex={setCurrentVideoIndex}
+                    />
                 </div>
             )}
 

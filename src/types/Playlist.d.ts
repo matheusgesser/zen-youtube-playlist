@@ -4,6 +4,7 @@ export namespace Playlist {
         videos: Video[],
         totalVideos: number,
         nextPageToken?: string,
+        shuffledOrder: number[],
     }
 
     type Video = {

@@ -75,7 +75,8 @@
         "@typescript-eslint/no-explicit-any": "off",
         "react/require-default-props": "off",
         "max-len": "off",
-        "react/no-unstable-nested-components": "off"
+        "react/no-unstable-nested-components": "off",
+        "import/no-cycle": "off"
     },
     "overrides": [
         {

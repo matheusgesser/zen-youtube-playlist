@@ -21,3 +21,30 @@ export const fetchPageAndAppendVideos = async (
 
     return { totalVideos };
 };
+
+// Fisher-Yates algorithm
+const shuffleArray = (array: any[]) => {
+    const arrayClone = [...array];
+    let oldElement;
+
+    for (let i = arrayClone.length - 1; i > 0; i -= 1) {
+        const randomPosition = Math.floor(Math.random() * (i + 1));
+
+        // Swap elements in the cloned array
+        oldElement = arrayClone[i];
+        arrayClone[i] = arrayClone[randomPosition];
+        arrayClone[randomPosition] = oldElement;
+    }
+
+    return arrayClone;
+};
+
+/** @factory */
+export const makeShuffledOrder = (totalVideos: number) => {
+    const list = Array.from({ length: totalVideos }).map((_, index) => index);
+
+    // Shuffles the list
+    const shuffledList = shuffleArray(list);
+
+    return shuffledList;
+};
