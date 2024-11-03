@@ -71,12 +71,18 @@ const addVideos = (playlistId: Playlist.Model['id'], videos: Playlist.Model['vid
     if (!savedPlaylist)
         throw new Error(`The playlist ${playlistId} doesn't exists`);
 
-    savedPlaylist.videos = [...savedPlaylist.videos, ...videos];
+    const filteredVideos = videos.filter(video => !savedPlaylist.videos.some(playlistVideo => playlistVideo.id === video.id));
+
+    savedPlaylist.videos = [...savedPlaylist.videos, ...filteredVideos];
 
     const shuffledOrder = makeShuffledOrder(savedPlaylist.videos.length + videos.length);
     savedPlaylist.shuffledOrder = shuffledOrder;
 
     window.localStorage.setItem('playlists', JSON.stringify(playlists));
+};
+
+const clear = () => {
+    window.localStorage.setItem('playlists', JSON.stringify({}));
 };
 
 export const PlaylistStorage = {
@@ -86,4 +92,5 @@ export const PlaylistStorage = {
     addVideos,
     getShuffledOrder,
     setShuffledOrder,
+    clear,
 };
