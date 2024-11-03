@@ -1,6 +1,8 @@
 export namespace Playlist {
     type Model = {
         id: string,
+        title: string,
+        privacyStatus: 'public' | 'unlisted' | 'private',
         videos: Video[],
         totalVideos: number,
         nextPageToken?: string,

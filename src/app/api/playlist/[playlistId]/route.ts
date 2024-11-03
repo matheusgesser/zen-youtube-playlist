@@ -1,17 +1,40 @@
 import type { NextRequest } from 'next/server';
 import { Playlist } from '@/types/Playlist';
-import { PlaylistItem } from './PlaylistItemResponse';
+import { PlaylistItem as PlaylistItemResponse } from './PlaylistItemResponse';
+import { Playlist as PlaylistResponse } from './PlaylistResponse';
 
 type Params = { params: { playlistId: string } };
 
-const isError = (data: PlaylistItem.Response | PlaylistItem.Error): data is PlaylistItem.Error => ('error' in data);
+const isPlaylistError = (data: PlaylistResponse.Response | PlaylistResponse.Error): data is PlaylistResponse.Error => ('error' in data);
+const isPlaylistItemError = (data: PlaylistItemResponse.Response | PlaylistItemResponse.Error): data is PlaylistItemResponse.Error => ('error' in data);
 
 export async function GET(request: NextRequest, { params }: Params) {
     const { playlistId } = params;
 
     const pageToken = new URL(request.url).searchParams.get('pageToken');
 
-    const urlParams = new URLSearchParams({
+    const playlistURLParams = new URLSearchParams({
+        part: 'snippet,status',
+        maxResults: '50',
+        id: playlistId,
+        key: process.env.API_KEY,
+    });
+
+    const playlistURL = `https://www.googleapis.com/youtube/v3/playlists?${playlistURLParams.toString()}`;
+
+    const playlistResponse: PlaylistResponse.Response | PlaylistResponse.Error = await fetch(playlistURL)
+        .then(response => response.json());
+
+    if (isPlaylistError(playlistResponse)) {
+        const { code, message } = playlistResponse.error;
+
+        return Response.json({ code, message });
+    }
+
+    const { items } = playlistResponse;
+    const [fetchedPlaylist] = items;
+
+    const playlistItemsURLParams = new URLSearchParams({
         part: 'snippet',
         maxResults: '50',
         playlistId,
@@ -19,25 +42,27 @@ export async function GET(request: NextRequest, { params }: Params) {
     });
 
     if (pageToken)
-        urlParams.set('pageToken', pageToken);
+        playlistItemsURLParams.set('pageToken', pageToken);
 
-    const url = `https://www.googleapis.com/youtube/v3/playlistItems?${urlParams.toString()}`;
+    const playlistItemsURL = `https://www.googleapis.com/youtube/v3/playlistItems?${playlistItemsURLParams.toString()}`;
 
-    const response: PlaylistItem.Response | PlaylistItem.Error = await fetch(url)
+    const playlistItemsResponse: PlaylistItemResponse.Response | PlaylistItemResponse.Error = await fetch(playlistItemsURL)
         .then(response => response.json());
 
-    if (isError(response)) {
-        const { code, message } = response.error;
+    if (isPlaylistItemError(playlistItemsResponse)) {
+        const { code, message } = playlistItemsResponse.error;
 
         return Response.json({ code, message });
     }
 
     // Exclude private videos
-    const filteredVideos = response.items.filter(({ snippet: { title } }) => title !== 'Private video');
+    const filteredVideos = playlistItemsResponse.items.filter(({ snippet: { title } }) => title !== 'Private video');
 
     const formattedData: Playlist.Model = {
         id: playlistId,
-        totalVideos: response.pageInfo.totalResults,
+        title: fetchedPlaylist.snippet.title,
+        privacyStatus: fetchedPlaylist.status.privacyStatus,
+        totalVideos: playlistItemsResponse.pageInfo.totalResults,
         videos: filteredVideos.map(({ snippet: { resourceId, title, position, thumbnails } }) => ({
             id: resourceId.videoId,
             title,
@@ -45,7 +70,7 @@ export async function GET(request: NextRequest, { params }: Params) {
             thumbnail: thumbnails?.high?.url ?? thumbnails?.medium?.url ?? thumbnails?.default?.url,
         })),
         shuffledOrder: [],
-        nextPageToken: response.nextPageToken,
+        nextPageToken: playlistItemsResponse.nextPageToken,
     };
 
     return Response.json({ data: formattedData });
