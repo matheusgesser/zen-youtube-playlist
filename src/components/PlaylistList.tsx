@@ -11,7 +11,10 @@ const makePrivacyIcon = (privacyStatus: Playlist.Model['privacyStatus']) => {
     if (privacyStatus === 'unlisted')
         return <LinkSimple size={14} className="text-neutral-500" />;
 
-    return <Globe size={14} className="text-neutral-500" />;
+    if (privacyStatus === 'public')
+        return <Globe size={14} className="text-neutral-500" />;
+
+    return null;
 };
 
 export function PlaylistList({ playlists }: Props) {
@@ -22,7 +25,7 @@ export function PlaylistList({ playlists }: Props) {
             {playlists.map(playlist => (
                 <Link href={`/playlist/${playlist.id}`} className="w-full flex items-center p-2 rounded-md bg-neutral-950">
                     <div className="flex items-center gap-1">
-                        <span className="text-lg">{playlist.title}</span>
+                        <span className="text-lg">{playlist.title ?? playlist.id}</span>
 
                         {makePrivacyIcon(playlist.privacyStatus)}
                     </div>

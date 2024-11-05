@@ -55,3 +55,8 @@ body {
         transform: rotate(360deg);
     }
 }
+
+/* @see https://primereact.org/theming/#scopedstyling */
+.p-skeleton {
+    @apply bg-neutral-700;
+}
