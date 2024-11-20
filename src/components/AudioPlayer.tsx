@@ -18,6 +18,7 @@ import { Slider, SliderChangeEvent } from 'primereact/slider';
 import { OnProgressProps } from 'react-player/base';
 import * as motion from 'framer-motion/client';
 import { useWindowDimensions } from '@/lib/hooks/useWindowDimensions';
+import { useAudioPlayer } from '@/lib/hooks/useAudioPlayer';
 import { AudioPlayerSkeleton } from './AudioPlayerSkeleton';
 
 type Props = {
@@ -53,15 +54,21 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
     toggleShuffle,
 }: Props, ref) => {
     const [isLoaded, setIsLoaded] = useState(false);
-    const [isPaused, setIsPaused] = useState(false);
     const [progress, setProgress] = useState(0);
-
-    const [volume, setVolume] = useState(50);
-    const [isMuted, setIsMuted] = useState(false);
 
     const player = useRef<ReactPlayer>(null);
 
     const isFirstRender = useRef(false);
+
+    const {
+        isPaused,
+        setIsPaused,
+
+        volume,
+        setVolume,
+        isMuted,
+        setIsMuted,
+    } = useAudioPlayer();
 
     const { width } = useWindowDimensions();
     const isMobile = width < 1280;
@@ -86,6 +93,16 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
         setProgress(sliderValue);
     };
 
+    const handleSkipBack = () => {
+        setProgress(0);
+        skipBack?.();
+    };
+
+    const handleSkipForward = () => {
+        setProgress(0);
+        skipForward?.();
+    };
+
     const toggleMuted = () => setIsMuted(prevState => !prevState);
 
     const thumbnailStyles: CSSProperties = {
@@ -100,10 +117,10 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
     useEffect(() => {
         setIsLoaded(false);
         setIsPaused(false);
-    }, [videoId]);
+    }, [videoId, setIsPaused]);
 
     return (
-        <motion.div ref={ref} layout className="min-w-[28rem] flex flex-col gap-6 items-center">
+        <motion.div ref={ref} layout className="flex flex-col gap-6 items-center">
             <ReactPlayer
                 playing={!isPaused}
                 url={`https://www.youtube.com/watch?v=${videoId}`}
@@ -136,7 +153,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                             </span>
                         </div>
 
-                        <div className="relative size-[12rem] rounded-full bg-neutral-800 animation-pulse" style={thumbnailStyles} />
+                        <div className="relative size-[12rem] rounded-full bg-neutral-800" style={thumbnailStyles} />
 
                         <div className="flex flex-col gap-6 items-center">
                             <Slider
@@ -155,7 +172,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                                     <Shuffle size={20} className="mr-[1px] mb-[1px]" />
                                 </button>
 
-                                <button type="button" disabled={skipBack === undefined} onClick={skipBack} className="byp-focus byp-focus-bg">
+                                <button type="button" disabled={skipBack === undefined} onClick={handleSkipBack} className="byp-focus byp-focus-bg">
                                     <SkipBack size={20} color={skipBack === undefined ? '#555' : undefined} />
                                 </button>
 
@@ -185,7 +202,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                                     </button>
                                 )}
 
-                                <button type="button" disabled={skipForward === undefined} onClick={skipForward} className="byp-focus byp-focus-bg">
+                                <button type="button" disabled={skipForward === undefined} onClick={handleSkipForward} className="byp-focus byp-focus-bg">
                                     <SkipForward size={20} color={skipForward === undefined ? '#555' : undefined} />
                                 </button>
 
@@ -200,7 +217,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                                 </button>
 
                                 <Slider
-                                    value={volume}
+                                    value={isMuted ? 0 : volume}
                                     onChange={(e) => setVolume(e.value as number)}
                                     className="w-[8rem] bg-neutral-800 h-1.5 my-2"
                                     pt={{

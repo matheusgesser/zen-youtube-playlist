@@ -13,6 +13,8 @@ import type { Playlist } from '@/types/Playlist';
 import { fetchPageAndAppendVideos, makeShuffledOrder } from '@/lib/helpers/PlaylistHelper';
 import { usePlaylistOrder } from '@/lib/hooks/usePlaylistOrder';
 import { VideosList } from '@/components/VideosList';
+import { useShortcuts } from '@/lib/hooks/useShortcuts';
+import { useAudioPlayer } from '@/lib/hooks/useAudioPlayer';
 
 type Props = { params: { playlistId: string } };
 
@@ -23,6 +25,8 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
     const [isListVisible, setIsListVisible] = useState(true);
 
     const toast = useRef<Toast>(null);
+
+    const { setIsPaused, setVolume, setIsMuted } = useAudioPlayer();
 
     const {
         isShuffleActive,
@@ -35,6 +39,8 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
         currentVideoIndex,
         setCurrentVideoIndex,
     });
+
+    const { handleKeyDown } = useShortcuts({ setIsPaused, setVolume, setIsMuted });
 
     const currentVideo = (currentVideoIndex !== null && playlist?.videos)
         ? playlist.videos[currentVideoIndex]
@@ -133,14 +139,18 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
         };
 
         fetchPlaylist();
-    }, [playlistId, loadRemainingVideos]);
+
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [playlistId, loadRemainingVideos, handleKeyDown]);
 
     return (
-        <div className="min-h-64 grid place-items-center">
+        <div className="min-h-64">
             {playlist === null ? (
                 <Spinner size={32} className="animate-spin" />
             ) : (
-                <div className="w-full min-h-[600px] flex flex-col gap-16 xl:flex-row justify-evenly items-center">
+                <div className="w-full min-h-[600px] flex flex-col xl:flex-row gap-16 justify-evenly items-center">
                     <motion.div initial={false} id="audio-player">
                         <AudioPlayer
                             videoId={currentVideo?.id}
