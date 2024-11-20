@@ -148,7 +148,9 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
     return (
         <div className="min-h-64">
             {playlist === null ? (
-                <Spinner size={32} className="animate-spin" />
+                <div className="w-full flex justify-center items-center h-20">
+                    <Spinner size={32} className="animate-spin" />
+                </div>
             ) : (
                 <div className="w-full min-h-[600px] flex flex-col xl:flex-row gap-16 justify-evenly items-center">
                     <motion.div initial={false} id="audio-player">
