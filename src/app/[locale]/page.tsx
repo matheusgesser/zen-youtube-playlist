@@ -16,7 +16,7 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="w-full self-center min-h-64 max-w-[40rem] px-6 grid place-items-center gap-8">
+        <div className="w-full self-center min-h-64 max-w-[48rem] px-6 grid place-items-center gap-8">
             <PlaylistInput />
 
             {playlists.length > 0 && <PlaylistList playlists={playlists} />}
