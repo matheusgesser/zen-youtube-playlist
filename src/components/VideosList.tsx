@@ -24,18 +24,19 @@ export function VideosList({
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
+                    className="w-full xl:w-auto flex justify-center"
                 >
-                    <section className="px-4 my-8">
+                    <section className="w-full max-w-[44rem] px-4 my-8">
                         <ScrollPanel
-                            style={{ width: '500px', height: '500px' }}
+                            style={{ width: '100%', maxWidth: '44rem', height: '500px' }}
                             pt={{ content: { className: 'flex flex-col gap-2 pr-3' } }}
                         >
                             {playlistVideos?.map((video, index) => (
                                 <button type="button" id={`video-${index}`} onClick={() => setCurrentVideoIndex(index)} className={`w-full flex gap-2 px-2 py-1.5 rounded-lg ${index === currentVideoIndex && 'bg-neutral-800'}`}>
                                     <div className="flex items-center gap-2 overflow-hidden">
-                                        <span className="text-neutral-400">
+                                        <span className="min-w-6 text-neutral-400">
                                             {index === currentVideoIndex ? (
-                                                <Play size={16} color="white" weight="fill" className={currentVideoIndex > 8 ? 'ml-0.5 mr-1' : 'mr-[-0.18rem]'} />
+                                                <Play size={16} color="white" weight="fill" />
                                             ) : (
                                                 `${index + 1}.`
                                             )}

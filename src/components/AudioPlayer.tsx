@@ -120,7 +120,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
     }, [videoId, setIsPaused]);
 
     return (
-        <motion.div ref={ref} layout className="flex flex-col gap-6 items-center">
+        <motion.div ref={ref} layout className="min-w-[32rem] flex flex-col gap-6 items-center">
             <ReactPlayer
                 playing={!isPaused}
                 url={`https://www.youtube.com/watch?v=${videoId}`}
@@ -147,8 +147,8 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                 ? <AudioPlayerSkeleton />
                 : (
                     <>
-                        <div className="max-w-[28rem] min-h-24 grid place-items-center">
-                            <span className="text-xl text-center line-clamp-3">
+                        <div className="min-h-24 grid place-items-center">
+                            <span className="max-w-[24rem] text-xl text-center line-clamp-3">
                                 {videoTitle}
                             </span>
                         </div>
