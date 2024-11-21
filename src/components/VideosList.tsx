@@ -2,13 +2,12 @@ import { Playlist } from '@/types/Playlist';
 import { Play } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ScrollPanel } from 'primereact/scrollpanel';
-import { Dispatch, SetStateAction } from 'react';
 
 type Props = {
     isVisible: boolean,
     playlistVideos: Playlist.Model['videos'] | undefined,
     currentVideoIndex: number | null,
-    setCurrentVideoIndex: Dispatch<SetStateAction<number | null>>,
+    setCurrentVideoIndex: (videoIndex: number) => void,
 }
 
 export function VideosList({
@@ -29,7 +28,10 @@ export function VideosList({
                     <section className="w-full max-w-[32rem] px-4 my-8">
                         <ScrollPanel
                             style={{ width: '100%', maxWidth: '44rem', height: '500px' }}
-                            pt={{ content: { className: 'flex flex-col gap-2 pr-3' } }}
+                            pt={{
+                                content: { className: 'flex flex-col gap-2 pr-3' },
+                                barY: { className: 'cursor-default' },
+                            }}
                         >
                             {playlistVideos?.map((video, index) => (
                                 <button type="button" id={`video-${index}`} onClick={() => setCurrentVideoIndex(index)} className={`w-full flex gap-2 px-2 py-1.5 rounded-lg ${index === currentVideoIndex && 'bg-neutral-800'}`}>

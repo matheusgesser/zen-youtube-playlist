@@ -16,10 +16,7 @@
             "warn"
         ],
         "no-unused-vars": [
-            "warn",
-            {
-                "ignoreRestSiblings": true
-            }
+            "off"
         ],
         "@typescript-eslint/no-unused-vars": "warn",
         "curly": [

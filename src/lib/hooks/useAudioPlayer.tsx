@@ -10,6 +10,9 @@ import {
 } from 'react';
 
 const AudioPlayerContextDefaultValues = {
+    progress: 0,
+    setProgress: () => {},
+
     isPaused: false,
     setIsPaused: () => {},
 
@@ -20,6 +23,9 @@ const AudioPlayerContextDefaultValues = {
 };
 
 type AudioPlayerContextType = {
+    progress: number,
+    setProgress: Dispatch<SetStateAction<number>>,
+
     isPaused: boolean,
     setIsPaused: Dispatch<SetStateAction<boolean>>,
 
@@ -34,6 +40,8 @@ type Props = { children: ReactNode };
 const AudioPlayerContext = createContext<AudioPlayerContextType>(AudioPlayerContextDefaultValues);
 
 function AudioPlayerProvider({ children }: Props) {
+    const [progress, setProgress] = useState(0);
+
     const [isPaused, setIsPaused] = useState(false);
 
     const [volume, setVolume] = useState(50);
@@ -41,6 +49,9 @@ function AudioPlayerProvider({ children }: Props) {
 
     // eslint-disable-next-line react/jsx-no-constructed-context-values
     const value: AudioPlayerContextType = {
+        progress,
+        setProgress,
+
         isPaused,
         setIsPaused,
 

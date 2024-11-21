@@ -36,7 +36,7 @@ export function Header() {
                 <Link href="/" className="flex px-2 py-1 gap-2 items-center rounded-lg hover:bg-neutral-800 byp-transition">
                     <Play size={16} />
 
-                    <h2 className="mr-auto">better-youtube-playlist</h2>
+                    <h2 className="mr-auto">zen-youtube-playlist</h2>
                 </Link>
             </div>
 

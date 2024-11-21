@@ -54,13 +54,15 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
     toggleShuffle,
 }: Props, ref) => {
     const [isLoaded, setIsLoaded] = useState(false);
-    const [progress, setProgress] = useState(0);
 
     const player = useRef<ReactPlayer>(null);
 
     const isFirstRender = useRef(false);
 
     const {
+        progress,
+        setProgress,
+
         isPaused,
         setIsPaused,
 
@@ -147,7 +149,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                 ? <AudioPlayerSkeleton />
                 : (
                     <>
-                        <div className="min-h-24 grid place-items-center">
+                        <div className="grid place-items-center">
                             <span className="max-w-[24rem] text-xl text-center line-clamp-3">
                                 {videoTitle}
                             </span>

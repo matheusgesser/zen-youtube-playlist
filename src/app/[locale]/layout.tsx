@@ -17,8 +17,8 @@ type Props = {
 const poppins = Poppins({ weight: '400', subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Better Youtube Playlist',
-    description: 'Play Youtube playlists, with a minimalist and better performing interface',
+    title: 'Zen Youtube Playlist',
+    description: 'Minimalist player, offering a distraction-free way to enjoy your playlists',
 };
 
 export default async function RootLayout({ children, params: { locale } }: Props) {

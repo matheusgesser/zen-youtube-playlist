@@ -1,4 +1,9 @@
-Play Youtube playlists, with a minimalist and better performing interface
+A sleek and minimalist web app designed with a focus on simplicity, offering a distraction-free way to enjoy your playlists
+
+- Local playlist storage for quick access
+- Keyboard shortcuts for effortless control
+- Smart shuffle to rediscover your favorites
+- Minimalist interface to help you focus on the content you love
 
 ## Run locally
 

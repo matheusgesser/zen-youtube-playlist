@@ -26,7 +26,7 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
 
     const toast = useRef<Toast>(null);
 
-    const { setIsPaused, setVolume, setIsMuted } = useAudioPlayer();
+    const { setProgress, setIsPaused, setVolume, setIsMuted } = useAudioPlayer();
 
     const {
         isShuffleActive,
@@ -73,6 +73,11 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
             life: 3000,
         });
     }, [playlistId]);
+
+    const handleSetCurrentVideoIndex = (videoIndex: number) => {
+        setProgress(0);
+        setCurrentVideoIndex(videoIndex);
+    };
 
     useEffect(() => {
         const fetchPlaylist = async () => {
@@ -170,7 +175,7 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
                         isVisible={isListVisible}
                         playlistVideos={playlist.videos}
                         currentVideoIndex={currentVideoIndex}
-                        setCurrentVideoIndex={setCurrentVideoIndex}
+                        setCurrentVideoIndex={handleSetCurrentVideoIndex}
                     />
                 </div>
             )}
