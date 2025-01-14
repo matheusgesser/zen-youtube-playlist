@@ -2,11 +2,14 @@
 
 import { useRouter } from '@/i18n/routing';
 import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr';
+import { useTranslations } from 'next-intl';
 import { InputText } from 'primereact/inputtext';
 import { KeyboardEvent, useState } from 'react';
 
 export default function PlaylistInput() {
     const [playlist, setPlaylist] = useState('');
+
+    const translate = useTranslations();
 
     const router = useRouter();
 
@@ -32,7 +35,7 @@ export default function PlaylistInput() {
 
     return (
         <div className="w-full flex flex-col gap-2">
-            <label htmlFor="playlist">Playlist ID or URL</label>
+            <label htmlFor="playlist">{translate('playlist-input-label')}</label>
 
             <div className="w-full relative flex items-center gap-1">
                 <InputText
@@ -51,7 +54,7 @@ export default function PlaylistInput() {
             </div>
 
             <small id="playlist-help">
-                The playlist must be public or non-listed
+                {translate('playlist-input-description')}
             </small>
         </div>
     );

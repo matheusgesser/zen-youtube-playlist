@@ -1,6 +1,19 @@
 {
-    "test": "testing",
-    "app": {
-        "lang": "ingles"
-    }
+    "stored-playlists": "Stored playlists",
+    "suggested-playlists": "Suggested playlists",
+    "playlist-input-label": "Playlist ID or URL",
+    "playlist-input-description": "The playlist must be public or non-listed",
+    "yes": "Yes",
+    "no": "No",
+    "load": "Load",
+    "success": "Success",
+    "warning": "Warning",
+    "error": "Error",
+    "clear-stored-data": "Clear stored data",
+    "clear-stored-data-description": "Are you sure you want to clear all stored data?",
+    "error-fetching-playlist": "Error {code} fetching playlist: {message}",
+    "x-videos-fetched-stored": "All {totalVideos} videos were fetched and stored",
+    "playlist-not-found": "Playlist not found",
+    "load-more": "Load more",
+    "load-remaining-x-items": "Do you wanna load the remaining {totalVideos} items?"
 }

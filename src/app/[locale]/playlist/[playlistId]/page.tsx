@@ -15,6 +15,7 @@ import { usePlaylistOrder } from '@/lib/hooks/usePlaylistOrder';
 import { VideosList } from '@/components/VideosList';
 import { useShortcuts } from '@/lib/hooks/useShortcuts';
 import { useAudioPlayer } from '@/lib/hooks/useAudioPlayer';
+import { useTranslations } from 'next-intl';
 
 type Props = { params: { playlistId: string } };
 
@@ -25,6 +26,8 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
     const [isListVisible, setIsListVisible] = useState(true);
 
     const toast = useRef<Toast>(null);
+
+    const translate = useTranslations();
 
     const { setProgress, setIsPaused, setVolume, setIsMuted } = useAudioPlayer();
 
@@ -50,10 +53,12 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
         const response = await fetchPageAndAppendVideos(playlistId, pageToken);
 
         if (isServiceError(response)) {
+            const { code, message } = response;
+
             toast.current!.show({
                 severity: 'error',
-                summary: 'Error',
-                detail: `Error ${response.code} fetching playlist: ${response.message}`,
+                summary: translate('error'),
+                detail: translate('error-fetching-playlist', { code, message }),
                 life: 3000,
             });
 
@@ -66,13 +71,15 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
 
         setPlaylist(savedPlaylist);
 
+        const { totalVideos } = response;
+
         toast.current!.show({
             severity: 'success',
-            summary: 'Success!',
-            detail: `All ${response.totalVideos} videos were fetched and stored`,
+            summary: translate('success'),
+            detail: translate('x-videos-fetched-stored', { totalVideos }),
             life: 3000,
         });
-    }, [playlistId]);
+    }, [playlistId, translate]);
 
     const handleSetCurrentVideoIndex = (videoIndex: number) => {
         setProgress(0);
@@ -99,12 +106,14 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
             const response = await getPlaylist(playlistId);
 
             if (isServiceError(response)) {
+                const { code, message } = response;
+
                 toast.current!.show({
                     severity: 'error',
-                    summary: 'Error!',
+                    summary: translate('error'),
                     detail: response.code === 404
-                        ? 'Playlist not found'
-                        : `Error ${response.code} fetching playlist: ${response.message}`,
+                        ? translate('playlist-not-found')
+                        : translate('error-fetching-playlist', { code, message }),
                     life: 3000,
                 });
 
@@ -116,10 +125,12 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
             setPlaylist(response.data);
 
             if (response.data.totalVideos > 50 && response.data.nextPageToken) {
+                const totalVideos = response.data.totalVideos - 50;
+
                 toast.current!.show({
                     severity: 'secondary',
-                    summary: 'Load more',
-                    detail: `Do you wanna load the remaining ${response.data.totalVideos - 50} items?`,
+                    summary: translate('load-more'),
+                    detail: translate('load-remaining-x-items', { totalVideos }),
                     sticky: true,
                     pt: { content: { className: 'bg-neutral-950 rounded-lg' } },
                     content: ({ message }) => (
@@ -133,9 +144,9 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
                             </div>
 
                             <Button
-                                label="Load"
+                                label={translate('load')}
                                 onClick={() => loadRemainingVideos(response.data.nextPageToken!)}
-                                className="h-8 w-16 border bg-neutral-50 text-black"
+                                className="h-8 w-[5rem] border bg-neutral-50 text-black"
                             />
                         </div>
                     ),
@@ -148,7 +159,7 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
         window.addEventListener('keydown', handleKeyDown);
 
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [playlistId, loadRemainingVideos, handleKeyDown]);
+    }, [playlistId, loadRemainingVideos, handleKeyDown, translate]);
 
     return (
         <div className="min-h-64">

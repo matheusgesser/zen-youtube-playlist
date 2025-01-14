@@ -7,11 +7,14 @@ import { Menu } from 'primereact/menu';
 import { MenuItem } from 'primereact/menuitem';
 import { ConfirmDialog } from 'primereact/confirmdialog';
 import { useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 export function Header() {
     const [isConfirmClearDataDialogVisible, setIsConfirmClearDataDialogVisible] = useState(false);
 
     const menuRight = useRef<Menu>(null);
+
+    const translate = useTranslations();
 
     const router = useRouter();
 
@@ -25,7 +28,7 @@ export function Header() {
 
     const items: MenuItem[] = [
         {
-            label: 'Clear stored data',
+            label: translate('clear-stored-data'),
             command: () => setIsConfirmClearDataDialogVisible(true),
         },
     ];
@@ -57,8 +60,10 @@ export function Header() {
                 group="declarative"
                 visible={isConfirmClearDataDialogVisible}
                 onHide={() => setIsConfirmClearDataDialogVisible(false)}
-                header="Warning"
-                message="Are you sure you want to clear all stored data?"
+                header={translate('warning')}
+                message={translate('clear-stored-data-description')}
+                acceptLabel={translate('yes')}
+                rejectLabel={translate('no')}
                 draggable={false}
                 dismissableMask
                 pt={{

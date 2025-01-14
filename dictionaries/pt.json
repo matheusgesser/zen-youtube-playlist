@@ -1,6 +1,19 @@
 {
-    "test": "testando",
-    "app": {
-        "lang": "protugues"
-    }
+    "stored-playlists": "Playlists salvas",
+    "suggested-playlists": "Playlists sugeridas",
+    "playlist-input-label": "ID ou URL da playlist",
+    "playlist-input-description": "A playlist inserida precisa ser pública ou não listada",
+    "yes": "Sim",
+    "no": "Não",
+    "load": "Carregar",
+    "success": "Sucesso",
+    "warning": "Atenção",
+    "error": "Erro",
+    "clear-stored-data": "Limpar dados salvos",
+    "clear-stored-data-description": "Você tem certeza de que deseja limpar todos os dados salvos?",
+    "error-fetching-playlist": "Erro {code} ao buscar a playlist: {message}",
+    "x-videos-fetched-stored": "Todos os {totalVideos} vídeos foram buscados e salvos",
+    "playlist-not-found": "Playlist não encontrada",
+    "load-more": "Carregar mais",
+    "load-remaining-x-items": "Você quer carregar os {totalVideos} itens restantes?"
 }

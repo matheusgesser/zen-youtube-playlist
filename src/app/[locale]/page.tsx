@@ -4,6 +4,7 @@ import PlaylistInput from '@/components/PlaylistInput';
 import { PlaylistList } from '@/components/PlaylistList';
 import { PlaylistStorage } from '@/lib/storage/PlaylistStorage';
 import { Playlist } from '@/types/Playlist';
+import { useTranslations } from 'next-intl';
 import { useState, useEffect } from 'react';
 
 const SUGGESTED_PLAYLISTS: Playlist.Model[] = [
@@ -36,6 +37,8 @@ const SUGGESTED_PLAYLISTS: Playlist.Model[] = [
 export default function Home() {
     const [playlists, setPlaylists] = useState<Playlist.Model[]>([]);
 
+    const translate = useTranslations();
+
     // Stored playlists must NOT be listed as suggestions
     const suggestedPlaylists = SUGGESTED_PLAYLISTS
         .filter(playlist => !playlists.some(storedPlaylist => storedPlaylist.id === playlist.id));
@@ -52,14 +55,14 @@ export default function Home() {
 
             {playlists.length > 0 && (
                 <PlaylistList
-                    label="Stored playlists"
+                    label={translate('stored-playlists')}
                     playlists={playlists}
                 />
             )}
 
             {suggestedPlaylists.length > 0 && (
                 <PlaylistList
-                    label="Suggested playlists"
+                    label={translate('suggested-playlists')}
                     playlists={suggestedPlaylists}
                 />
             )}
