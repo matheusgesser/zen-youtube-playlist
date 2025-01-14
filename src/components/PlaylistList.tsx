@@ -2,7 +2,10 @@ import { Link } from '@/i18n/routing';
 import { Playlist } from '@/types/Playlist';
 import { Lock, LinkSimple, Globe } from '@phosphor-icons/react/dist/ssr';
 
-type Props = { playlists: Playlist.Model[] }
+type Props = {
+    label: string,
+    playlists: Playlist.Model[],
+};
 
 const makePrivacyIcon = (privacyStatus: Playlist.Model['privacyStatus']) => {
     if (privacyStatus === 'private')
@@ -17,10 +20,10 @@ const makePrivacyIcon = (privacyStatus: Playlist.Model['privacyStatus']) => {
     return null;
 };
 
-export function PlaylistList({ playlists }: Props) {
+export function PlaylistList({ label, playlists }: Props) {
     return (
         <div className="w-full self-start flex flex-col gap-2">
-            <span>Stored playlists</span>
+            <span>{label}</span>
 
             {playlists.map(playlist => (
                 <Link href={`/playlist/${playlist.id}`} className="w-full flex items-center p-2 rounded-md bg-neutral-950">

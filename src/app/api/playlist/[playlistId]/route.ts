@@ -55,8 +55,9 @@ export async function GET(request: NextRequest, { params }: Params) {
         return Response.json({ code, message });
     }
 
-    // Exclude private videos
-    const filteredVideos = playlistItemsResponse.items.filter(({ snippet: { title } }) => title !== 'Private video');
+    // Exclude private and deleted videos
+    const filteredVideos = playlistItemsResponse.items
+        .filter(({ snippet: { title } }) => title !== 'Private video' && title !== 'Deleted video');
 
     const formattedData: Playlist.Model = {
         id: playlistId,
