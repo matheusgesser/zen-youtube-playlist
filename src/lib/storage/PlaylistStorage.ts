@@ -81,6 +81,14 @@ const addVideos = (playlistId: Playlist.Model['id'], videos: Playlist.Model['vid
     window.localStorage.setItem('playlists', JSON.stringify(playlists));
 };
 
+const remove = (playlistId: Playlist.Model['id']) => {
+    const playlists = getAll();
+
+    delete playlists[playlistId];
+
+    window.localStorage.setItem('playlists', JSON.stringify(playlists));
+};
+
 const clear = () => {
     window.localStorage.setItem('playlists', JSON.stringify({}));
 };
@@ -92,5 +100,6 @@ export const PlaylistStorage = {
     addVideos,
     getShuffledOrder,
     setShuffledOrder,
+    remove,
     clear,
 };
