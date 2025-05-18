@@ -119,6 +119,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
     useEffect(() => {
         setIsLoaded(false);
         setIsPaused(false);
+        player.current?.forceUpdate();
     }, [videoId, setIsPaused]);
 
     return (
@@ -128,6 +129,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                 url={`https://www.youtube.com/watch?v=${videoId}`}
                 ref={player}
                 controls={false}
+                onError={handleSkipForward}
                 volume={isMuted ? 0 : (volume / 100)}
                 onReady={() => {
                     setIsLoaded(true);
