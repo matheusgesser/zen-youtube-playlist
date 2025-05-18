@@ -41,7 +41,7 @@ export function ManagePlaylistsDialog({ isVisible, closeModal }: Props) {
             <div className="flex flex-col gap-4 items-start py-2 truncate">
                 <div className="w-full flex flex-col gap-2">
                     {playlists.map(playlist => (
-                        <div className="flex gap-0 items-center truncate">
+                        <div className="flex gap-0 items-center truncate" key={playlist.id}>
                             <RadioButton
                                 inputId={playlist.id}
                                 name="pizza"
