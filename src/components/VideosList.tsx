@@ -25,11 +25,11 @@ export function VideosList({
                     exit={{ opacity: 0 }}
                     className="w-full xl:w-auto flex justify-center"
                 >
-                    <section className="w-full max-w-[32rem] px-4 my-8">
+                    <section className="flex flex-col items-center w-full px-4 my-8">
                         <ScrollPanel
                             style={{ width: '100%', maxWidth: '44rem', height: '500px' }}
                             pt={{
-                                content: { className: 'flex flex-col gap-2 pr-3' },
+                                content: { className: 'flex flex-col gap-2' },
                                 barY: { className: 'cursor-default' },
                             }}
                         >
@@ -42,15 +42,15 @@ export function VideosList({
                                     className={`w-full flex gap-2 px-2 py-1.5 rounded-lg ${index === currentVideoIndex && 'bg-neutral-800'}`}
                                 >
                                     <div className="flex items-center gap-2 overflow-hidden">
-                                        <span className="min-w-6 text-neutral-400">
+                                        <span className="min-w-8 text-neutral-400 text-end">
                                             {index === currentVideoIndex ? (
-                                                <Play size={16} color="white" weight="fill" />
+                                                <Play size={16} color="white" weight="fill" className="ml-auto" />
                                             ) : (
                                                 `${index + 1}.`
                                             )}
                                         </span>
 
-                                        <span className="text-start whitespace-nowrap overflow-hidden text-ellipsis">{video.title}</span>
+                                        <span className="pr-4 text-start whitespace-nowrap overflow-hidden text-ellipsis">{video.title}</span>
                                     </div>
                                 </button>
                             ))}

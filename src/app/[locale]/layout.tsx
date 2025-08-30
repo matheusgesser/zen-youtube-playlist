@@ -30,7 +30,7 @@ export default async function RootLayout({ children, params: { locale } }: Props
         <html lang={locale}>
             <body className={`${poppins.className} antialiased`}>
                 <NextIntlClientProvider messages={messages}>
-                    <div className="min-h-screen p-4 flex flex-col gap-2 pb-20 sm:py-10 sm:px-20">
+                    <div className="min-h-screen p-4 flex flex-col gap-2 sm:py-10 sm:px-20">
                         <Header />
 
                         <main className="flex flex-col mt-10">
