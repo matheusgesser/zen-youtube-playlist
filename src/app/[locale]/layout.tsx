@@ -28,6 +28,8 @@ export default async function RootLayout({ children, params: { locale } }: Props
 
     return (
         <html lang={locale}>
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
             <body className={`${poppins.className} antialiased`}>
                 <NextIntlClientProvider messages={messages}>
                     <div className="min-h-screen p-4 flex flex-col gap-2 sm:py-10 sm:px-20">
