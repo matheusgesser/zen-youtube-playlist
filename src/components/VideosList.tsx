@@ -25,7 +25,7 @@ export function VideosList({
                     exit={{ opacity: 0 }}
                     className="w-full xl:w-auto flex justify-center"
                 >
-                    <section className="flex flex-col items-center w-full px-4 my-8">
+                    <section className="flex flex-col items-center w-full max-w-[min(36rem,100%)] px-4 my-8">
                         <ScrollPanel
                             style={{ width: '100%', maxWidth: '44rem', height: '500px' }}
                             pt={{

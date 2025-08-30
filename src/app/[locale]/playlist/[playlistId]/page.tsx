@@ -16,6 +16,7 @@ import { VideosList } from '@/components/VideosList';
 import { useShortcuts } from '@/lib/hooks/useShortcuts';
 import { useAudioPlayer } from '@/lib/hooks/useAudioPlayer';
 import { useTranslations } from 'next-intl';
+import { useWindowDimensions } from '@/lib/hooks/useWindowDimensions';
 
 type Props = { params: { playlistId: string } };
 
@@ -24,6 +25,9 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
     const [currentVideoIndex, setCurrentVideoIndex] = useState<number | null>(0);
 
     const [isListVisible, setIsListVisible] = useState(true);
+
+    const { width } = useWindowDimensions();
+    const isMobile = width < 1280;
 
     const toast = useRef<Toast>(null);
 
@@ -183,7 +187,7 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
                     </motion.div>
 
                     <VideosList
-                        isVisible={isListVisible}
+                        isVisible={isListVisible || isMobile}
                         playlistVideos={playlist.videos}
                         currentVideoIndex={currentVideoIndex}
                         setCurrentVideoIndex={handleSetCurrentVideoIndex}
