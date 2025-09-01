@@ -2,6 +2,7 @@ import { Playlist } from '@/types/Playlist';
 import { Play } from '@phosphor-icons/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ScrollPanel } from 'primereact/scrollpanel';
+import { useEffect, useRef } from 'react';
 
 type Props = {
     isVisible: boolean,
@@ -16,6 +17,22 @@ export function VideosList({
     currentVideoIndex,
     setCurrentVideoIndex,
 }: Props) {
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+    useEffect(() => {
+        const listElement = containerRef.current?.querySelector<HTMLDivElement>('.p-scrollpanel-content');
+        const buttonElement = buttonRefs.current[currentVideoIndex ?? 0];
+
+        if (!listElement || !buttonElement)
+            return;
+
+        listElement.scrollTo({
+            top: buttonElement.offsetTop - listElement.clientHeight / 2 + buttonElement.clientHeight / 2,
+            behavior: 'smooth',
+        });
+    }, [currentVideoIndex]);
+
     return (
         <AnimatePresence mode="popLayout">
             {isVisible ? (
@@ -25,7 +42,7 @@ export function VideosList({
                     exit={{ opacity: 0 }}
                     className="w-full xl:w-auto flex justify-center"
                 >
-                    <section className="flex flex-col items-center w-full max-w-[min(36rem,100%)] px-4 my-8">
+                    <section ref={containerRef} className="flex flex-col items-center w-full max-w-[min(36rem,100%)] px-4 my-8">
                         <ScrollPanel
                             style={{ width: '100%', maxWidth: '44rem', height: '500px' }}
                             pt={{
@@ -38,8 +55,9 @@ export function VideosList({
                                     type="button"
                                     id={`video-${index}`}
                                     onClick={() => setCurrentVideoIndex(index)}
-                                    key={video.id}
+                                    ref={(element) => { buttonRefs.current[index] = element; }}
                                     className={`w-full flex gap-2 px-2 py-1.5 rounded-lg ${index === currentVideoIndex && 'bg-neutral-800'}`}
+                                    key={video.originalPosition}
                                 >
                                     <div className="flex items-center gap-2 overflow-hidden">
                                         <span className="min-w-8 text-neutral-400 text-end">
