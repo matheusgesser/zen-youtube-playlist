@@ -40,6 +40,10 @@ export function useShortcuts({ setIsPaused, setVolume, setIsMuted }: Props) {
         if (!isValidKeyCode(e.code))
             return;
 
+        // Prevent play/pause event firing twice
+        if (e.code === 'Space' && e.target instanceof HTMLButtonElement)
+            return;
+
         const action = getActionByKeyCode(e.code);
 
         action();
