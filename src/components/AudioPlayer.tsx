@@ -34,13 +34,15 @@ type Props = {
 
 /** @factory */
 const makeVolumeIcon = (volume: number, isMuted: boolean) => {
+    const styles = { className: 'shrink-0' } as const;
+
     if (isMuted || volume === 0)
-        return <SpeakerSlash size={24} />;
+        return <SpeakerSlash size={24} {...styles} />;
 
     if (volume < 50)
-        return <SpeakerLow size={24} />;
+        return <SpeakerLow size={24} {...styles} />;
 
-    return <SpeakerHigh size={24} />;
+    return <SpeakerHigh size={24} {...styles} />;
 };
 
 export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
@@ -123,7 +125,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
     }, [videoId, setIsPaused]);
 
     return (
-        <motion.div ref={ref} layout className="flex flex-col gap-6 items-center">
+        <motion.div ref={ref} layout className="w-[min(24rem,100%)] flex flex-col gap-6 items-center">
             <ReactPlayer
                 playing={!isPaused}
                 url={`https://www.youtube.com/watch?v=${videoId}`}
@@ -151,8 +153,8 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                 ? <AudioPlayerSkeleton />
                 : (
                     <>
-                        <div className="grid place-items-center">
-                            <span className="px-2 max-w-[min(24rem,100%)] text-xl text-center line-clamp-3">
+                        <div className="w-[min(24rem,100%)] h-[56px] px-2 flex flex-col justify-end">
+                            <span className="text-xl text-center line-clamp-2">
                                 {videoTitle}
                             </span>
                         </div>
@@ -163,7 +165,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                             <Slider
                                 value={progress}
                                 onChange={handleSeekProgress}
-                                className="w-[16rem] bg-neutral-800 h-1.5"
+                                className="w-[min(16rem,100%)] bg-neutral-800 h-1.5"
                                 pt={{
                                     root: { className: 'cursor-pointer rounded-xl' },
                                     range: { className: 'cursor-pointer bg-white rounded-xl' },
@@ -173,11 +175,11 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
 
                             <div className="flex gap-6 items-center">
                                 <button type="button" onClick={toggleShuffle} className={`p-1.5 rounded-full byp-focus byp-focus-bg ${isShuffleActive && 'bg-neutral-800'}`}>
-                                    <Shuffle size={20} className="mr-[1px] mb-[1px]" />
+                                    <Shuffle size={20} className="mr-[1px] mb-[1px] shrink-0" />
                                 </button>
 
                                 <button type="button" disabled={skipBack === undefined} onClick={handleSkipBack} className="byp-focus byp-focus-bg">
-                                    <SkipBack size={20} color={skipBack === undefined ? '#555' : undefined} />
+                                    <SkipBack size={20} color={skipBack === undefined ? '#555' : undefined} className="shrink-0" />
                                 </button>
 
                                 {isPaused ? (
@@ -190,6 +192,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                                             size={28}
                                             color="black"
                                             weight="fill"
+                                            className="shrink-0"
                                         />
                                     </button>
                                 ) : (
@@ -202,16 +205,25 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                                             size={28}
                                             color="black"
                                             weight="fill"
+                                            className="shrink-0"
                                         />
                                     </button>
                                 )}
 
                                 <button type="button" disabled={skipForward === undefined} onClick={handleSkipForward} className="byp-focus byp-focus-bg">
-                                    <SkipForward size={20} color={skipForward === undefined ? '#555' : undefined} />
+                                    <SkipForward
+                                        size={20}
+                                        color={skipForward === undefined ? '#555' : undefined}
+                                        className="shrink-0"
+                                    />
                                 </button>
 
                                 <button type="button" disabled={isMobile} onClick={toggleList} className="p-1.5 rounded-full byp-focus byp-focus-bg">
-                                    <ListBullets size={20} color={isMobile ? '#555' : undefined} />
+                                    <ListBullets
+                                        size={20}
+                                        color={isMobile ? '#555' : undefined}
+                                        className="shrink-0"
+                                    />
                                 </button>
                             </div>
 

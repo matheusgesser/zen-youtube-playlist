@@ -173,7 +173,7 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
                 </div>
             ) : (
                 <div className="w-full min-h-[600px] flex flex-col xl:flex-row gap-16 justify-evenly items-center">
-                    <motion.div initial={false} id="audio-player">
+                    <motion.div initial={false} id="audio-player" className="w-[min(24rem,100%)]">
                         <AudioPlayer
                             videoId={currentVideo?.id}
                             videoTitle={currentVideo?.title}
