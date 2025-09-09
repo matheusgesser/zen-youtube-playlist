@@ -1,7 +1,5 @@
 import { Playlist } from '@/types/Playlist';
-import {
-    CSSProperties, forwardRef, useEffect, useRef, useState,
-} from 'react';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 import {
     ListBullets,
     Pause,
@@ -20,6 +18,7 @@ import * as motion from 'framer-motion/client';
 import { useWindowDimensions } from '@/lib/hooks/useWindowDimensions';
 import { useAudioPlayer } from '@/lib/hooks/useAudioPlayer';
 import { AudioPlayerSkeleton } from './AudioPlayerSkeleton';
+import { TrackThumbnail } from './TrackThumbnail';
 
 type Props = {
     videoId: Playlist.Video['id'] | undefined,
@@ -109,15 +108,6 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
 
     const toggleMuted = () => setIsMuted(prevState => !prevState);
 
-    const thumbnailStyles: CSSProperties = {
-        backgroundImage: `url(${videoThumbnail})`,
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: '180% 140%',
-        animation: `spin 30s linear infinite normal none ${isPaused ? 'paused' : 'running'}`,
-        transition: 'transform 2s linear',
-    };
-
     useEffect(() => {
         setIsLoaded(false);
         setIsPaused(false);
@@ -159,7 +149,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
                             </span>
                         </div>
 
-                        <div className="relative size-[12rem] rounded-full bg-neutral-800" style={thumbnailStyles} />
+                        <TrackThumbnail thumbnailUrl={videoThumbnail} isPaused={isPaused} />
 
                         <div className="flex flex-col gap-6 items-center">
                             <Slider
