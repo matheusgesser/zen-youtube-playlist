@@ -134,6 +134,8 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
 
                     isFirstRender.current = false;
                 }}
+                onPlay={() => setIsPaused(false)}
+                onPause={() => setIsPaused(true)}
                 onEnded={skipForward}
                 onProgress={updateProgress}
                 style={{ display: 'none', visibility: 'hidden' }}
