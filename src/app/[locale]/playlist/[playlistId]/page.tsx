@@ -5,7 +5,7 @@ import { Toast } from 'primereact/toast';
 import { getPlaylist, isServiceError } from '@/service/PlaylistService';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Spinner } from '@phosphor-icons/react';
-import { Button } from 'primereact/button';
+import { ProgressSpinner } from 'primereact/progressspinner';
 import { AudioPlayer } from '@/components/AudioPlayer';
 import { sleep } from '@/lib/sleep';
 import * as motion from 'framer-motion/client';
@@ -80,7 +80,7 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
         toast.current!.show({
             severity: 'success',
             summary: translate('success'),
-            detail: translate('x-videos-fetched-stored', { totalVideos }),
+            detail: translate('playlist-loaded', { totalVideos }),
             life: 3000,
         });
     }, [playlistId, translate]);
@@ -131,27 +131,28 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
             if (response.data.totalVideos > 50 && response.data.nextPageToken) {
                 const totalVideos = response.data.totalVideos - 50;
 
+                loadRemainingVideos(response.data.nextPageToken);
+
                 toast.current!.show({
-                    severity: 'secondary',
-                    summary: translate('load-more'),
-                    detail: translate('load-remaining-x-items', { totalVideos }),
+                    severity: 'contrast',
+                    summary: translate('loading-playlist'),
+                    detail: translate('fetching-n-videos', { totalVideos }),
                     sticky: true,
+                    closable: false,
                     pt: { content: { className: 'bg-neutral-950 rounded-lg' } },
                     content: ({ message }) => (
-                        <div className="flex flex-col" style={{ flex: '1' }}>
-                            <div className="flex items-center gap-2">
-                                <span className="font-bold text-lg">{message.summary}</span>
-                            </div>
+                        <div className="flex gap-2" style={{ flex: '1' }}>
+                            <ProgressSpinner className="size-8" color="#FFF" animationDuration=".5s" />
 
-                            <div className="font-medium my-3">
-                                {message.detail}
-                            </div>
+                            <div className="flex flex-col">
+                                <div className="flex items-center gap-2">
+                                    <span className="font-bold text-lg">{message.summary}</span>
+                                </div>
 
-                            <Button
-                                label={translate('load')}
-                                onClick={() => loadRemainingVideos(response.data.nextPageToken!)}
-                                className="h-8 w-[5rem] border bg-neutral-50 text-black"
-                            />
+                                <div className="font-medium my-3">
+                                    {message.detail}
+                                </div>
+                            </div>
                         </div>
                     ),
                 });
