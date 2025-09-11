@@ -1,11 +1,12 @@
 'use client';
 
-import { Link } from '@/i18n/routing';
+import { Link, usePathname, useRouter } from '@/i18n/routing';
 import { Gear, Play } from '@phosphor-icons/react/dist/ssr';
 import { Menu } from 'primereact/menu';
 import { MenuItem } from 'primereact/menuitem';
 import { useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
+import Image from 'next/image';
 import { ManagePlaylistsDialog } from './ManagePlaylistsDialog';
 
 export function Header() {
@@ -15,10 +16,42 @@ export function Header() {
 
     const translate = useTranslations();
 
+    const router = useRouter();
+    const pathname = usePathname();
+    const locale = useLocale();
+
+    const alternateLocale = locale === 'pt' ? 'en' : 'pt';
+
+    const makeLabel = () => {
+        if (alternateLocale === 'en')
+            return 'English';
+
+        return 'Português Brasileiro';
+    };
+
+    const toggleLocale = () => {
+        const newLocale = alternateLocale;
+
+        router.push(pathname, { locale: newLocale });
+    };
+
     const items: MenuItem[] = [
         {
             label: translate('manage-playlists'),
             command: () => setIsManagePlaylistsDialogVisible(true),
+        },
+        {
+            icon: (
+                <Image
+                    src={`/${alternateLocale}.svg`}
+                    alt={`/${alternateLocale} flag`}
+                    width={20}
+                    height={20}
+                    className="mr-1"
+                />
+            ),
+            label: makeLabel(),
+            command: toggleLocale,
         },
     ];
 
@@ -43,7 +76,15 @@ export function Header() {
                     <Gear size={26} color="white" />
                 </button>
             </div>
-            <Menu model={items} popup ref={menuRight} id="popup_menu" popupAlignment="right" />
+
+            <Menu
+                ref={menuRight}
+                model={items}
+                popup
+                id="popup_menu"
+                popupAlignment="right"
+                className="w-60"
+            />
 
             <ManagePlaylistsDialog
                 isVisible={isManagePlaylistsDialogVisible}
