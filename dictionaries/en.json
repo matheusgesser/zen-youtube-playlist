@@ -14,5 +14,8 @@
     "loading-playlist": "Loading playlist",
     "fetching-n-videos": "Fetching {totalVideos} videos in the background...",
     "playlist-loaded": "Playlist fully loaded — {totalVideos} videos ready",
-    "playlist-not-found": "Playlist not found"
+    "playlist-not-found": "Playlist not found",
+    "private": "Private",
+    "unlisted": "Unlisted",
+    "public": "Public"
 }
