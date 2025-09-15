@@ -29,6 +29,7 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
     const { width } = useWindowDimensions();
     const isMobile = width < 1280;
 
+    const isFirstRender = useRef(true);
     const toast = useRef<Toast>(null);
 
     const translate = useTranslations();
@@ -90,81 +91,87 @@ export default function PlaylistPage({ params: { playlistId } }: Props) {
         setCurrentVideoIndex(videoIndex);
     };
 
-    useEffect(() => {
-        const fetchPlaylist = async () => {
-            const savedPlaylist = PlaylistStorage.get(playlistId);
+    const fetchPlaylist = useCallback(async () => {
+        const savedPlaylist = PlaylistStorage.get(playlistId);
 
-            if (savedPlaylist) {
-                // Fast loading isn't always pleasant for user
-                await sleep(1000);
+        if (savedPlaylist) {
+            // Fast loading isn't always pleasant for user
+            await sleep(1000);
 
-                setPlaylist(savedPlaylist);
+            setPlaylist(savedPlaylist);
 
-                // Updates playlist shuffle order to ensure randomization
-                const shuffledOrder = makeShuffledOrder(savedPlaylist.videos.length);
-                PlaylistStorage.setShuffledOrder(playlistId, shuffledOrder);
+            // Updates playlist shuffle order to ensure randomization
+            const shuffledOrder = makeShuffledOrder(savedPlaylist.videos.length);
+            PlaylistStorage.setShuffledOrder(playlistId, shuffledOrder);
 
-                return;
-            }
+            return;
+        }
 
-            const response = await getPlaylist(playlistId);
+        const response = await getPlaylist(playlistId);
 
-            if (isServiceError(response)) {
-                const { code, message } = response;
+        if (isServiceError(response)) {
+            const { code, message } = response;
 
-                toast.current!.show({
-                    severity: 'error',
-                    summary: translate('error'),
-                    detail: response.code === 404
-                        ? translate('playlist-not-found')
-                        : translate('error-fetching-playlist', { code, message }),
-                    life: 3000,
-                });
+            toast.current!.show({
+                severity: 'error',
+                summary: translate('error'),
+                detail: response.code === 404
+                    ? translate('playlist-not-found')
+                    : translate('error-fetching-playlist', { code, message }),
+                life: 3000,
+            });
 
-                return;
-            }
+            return;
+        }
 
-            PlaylistStorage.add(response.data);
+        PlaylistStorage.add(response.data);
 
-            setPlaylist(response.data);
+        setPlaylist(response.data);
 
-            if (response.data.totalVideos > 50 && response.data.nextPageToken) {
-                const totalVideos = response.data.totalVideos - 50;
+        if (response.data.totalVideos > 50 && response.data.nextPageToken) {
+            const totalVideos = response.data.totalVideos - 50;
 
-                loadRemainingVideos(response.data.nextPageToken);
+            loadRemainingVideos(response.data.nextPageToken);
 
-                toast.current!.show({
-                    severity: 'contrast',
-                    summary: translate('loading-playlist'),
-                    detail: translate('fetching-n-videos', { totalVideos }),
-                    sticky: true,
-                    closable: false,
-                    pt: { content: { className: 'bg-neutral-950 rounded-lg' } },
-                    content: ({ message }) => (
-                        <div className="flex gap-2" style={{ flex: '1' }}>
-                            <ProgressSpinner className="size-8" color="#FFF" animationDuration=".5s" />
+            toast.current!.show({
+                severity: 'contrast',
+                summary: translate('loading-playlist'),
+                detail: translate('fetching-n-videos', { totalVideos }),
+                sticky: true,
+                closable: false,
+                pt: { content: { className: 'bg-neutral-950 rounded-lg' } },
+                content: ({ message }) => (
+                    <div className="flex gap-2" style={{ flex: '1' }}>
+                        <ProgressSpinner className="size-8" color="#FFF" animationDuration=".5s" />
 
-                            <div className="flex flex-col">
-                                <div className="flex items-center gap-2">
-                                    <span className="font-bold text-lg">{message.summary}</span>
-                                </div>
+                        <div className="flex flex-col">
+                            <div className="flex items-center gap-2">
+                                <span className="font-bold text-lg">{message.summary}</span>
+                            </div>
 
-                                <div className="font-medium my-3">
-                                    {message.detail}
-                                </div>
+                            <div className="font-medium my-3">
+                                {message.detail}
                             </div>
                         </div>
-                    ),
-                });
-            }
-        };
+                    </div>
+                ),
+            });
+        }
+    }, [playlistId, loadRemainingVideos, translate]);
 
-        fetchPlaylist();
+    useEffect(() => {
+        if (isFirstRender.current) {
+            fetchPlaylist();
+
+            isFirstRender.current = false;
+        }
 
         window.addEventListener('keydown', handleKeyDown);
 
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [playlistId, loadRemainingVideos, handleKeyDown, translate]);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [fetchPlaylist, handleKeyDown]);
 
     return (
         <div className="min-h-64">
