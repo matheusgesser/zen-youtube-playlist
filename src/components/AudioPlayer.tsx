@@ -17,6 +17,7 @@ import { OnProgressProps } from 'react-player/base';
 import * as motion from 'framer-motion/client';
 import { useWindowDimensions } from '@/lib/hooks/useWindowDimensions';
 import { useAudioPlayer } from '@/lib/hooks/useAudioPlayer';
+import { useWakeLock } from '@/lib/hooks/useWakeLock';
 import { AudioPlayerSkeleton } from './AudioPlayerSkeleton';
 import { TrackThumbnail } from './TrackThumbnail';
 
@@ -55,6 +56,7 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
     toggleShuffle,
 }: Props, ref) => {
     const [isLoaded, setIsLoaded] = useState(false);
+    const { request, release } = useWakeLock();
 
     const player = useRef<ReactPlayer>(null);
 
@@ -134,8 +136,14 @@ export const AudioPlayer = forwardRef<HTMLDivElement, Props>(({
 
                     isFirstRender.current = false;
                 }}
-                onPlay={() => setIsPaused(false)}
-                onPause={() => setIsPaused(true)}
+                onPlay={() => {
+                    setIsPaused(false);
+                    request();
+                }}
+                onPause={() => {
+                    setIsPaused(true);
+                    release();
+                }}
                 onEnded={skipForward}
                 onProgress={updateProgress}
                 style={{ display: 'none', visibility: 'hidden' }}
