@@ -62,7 +62,7 @@ export function VideosList({
                                     <div className="flex items-center gap-2 overflow-hidden">
                                         <span className="min-w-8 text-neutral-400 text-end">
                                             {index === currentVideoIndex ? (
-                                                <Play size={16} color="white" weight="fill" className="ml-auto" />
+                                                <Play size={16} color="white" weight="fill" className="mx-auto" />
                                             ) : (
                                                 `${index + 1}.`
                                             )}
